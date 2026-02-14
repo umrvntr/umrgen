@@ -1,0 +1,127 @@
+{
+  "Flux2Scheduler": {
+    "input": {
+      "required": {
+        "steps": [
+          "INT",
+          {
+            "default": 20,
+            "min": 1,
+            "max": 4096
+          }
+        ],
+        "width": [
+          "INT",
+          {
+            "default": 1024,
+            "min": 16,
+            "max": 16384,
+            "step": 1
+          }
+        ],
+        "height": [
+          "INT",
+          {
+            "default": 1024,
+            "min": 16,
+            "max": 16384,
+            "step": 1
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "steps",
+        "width",
+        "height"
+      ]
+    },
+    "output": [
+      "SIGMAS"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "SIGMAS"
+    ],
+    "output_tooltips": [
+      null
+    ],
+    "output_matchtypes": null,
+    "name": "Flux2Scheduler",
+    "display_name": null,
+    "description": "",
+    "python_module": "comfy_extras.nodes_flux",
+    "category": "sampling/custom_sampling/schedulers",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false,
+    "price_badge": null
+  },
+  "EmptyFlux2LatentImage": {
+    "input": {
+      "required": {
+        "width": [
+          "INT",
+          {
+            "default": 1024,
+            "min": 16,
+            "max": 16384,
+            "step": 16
+          }
+        ],
+        "height": [
+          "INT",
+          {
+            "default": 1024,
+            "min": 16,
+            "max": 16384,
+            "step": 16
+          }
+        ],
+        "batch_size": [
+          "INT",
+          {
+            "default": 1,
+            "min": 1,
+            "max": 4096
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "width",
+        "height",
+        "batch_size"
+      ]
+    },
+    "output": [
+      "LATENT"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "LATENT"
+    ],
+    "output_tooltips": [
+      null
+    ],
+    "output_matchtypes": null,
+    "name": "EmptyFlux2LatentImage",
+    "display_name": "Empty Flux 2 Latent",
+    "description": "",
+    "python_module": "comfy_extras.nodes_flux",
+    "category": "latent",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false,
+    "price_badge": null
+  },
+  "GGUFModelPatcher": "NOT FOUND"
+}

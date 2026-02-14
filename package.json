@@ -1,0 +1,57 @@
+{
+  "name": "umrgen",
+  "version": "0.8.3.1",
+  "description": "Standalone local AI image generator using Z-Image-Turbo",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "dev": "concurrently -n server,ui -c blue,green \"npm:dev:server\" \"npm:dev:ui\"",
+    "dev:server": "node --watch server.mjs",
+    "dev:ui": "vite",
+    "dev:ui:separate": "vite --config vite.dev.config.js",
+    "dev:all": "concurrently -n server,prod-ui,dev-ui -c blue,green,yellow \"npm:dev:server\" \"npm:dev:ui\" \"npm:dev:ui:separate\"",
+    "build": "vite build",
+    "build:dev": "vite build --config vite.dev.config.js",
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "clsx": "^2.1.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "framer-motion": "^11.0.8",
+    "lucide-react": "^0.344.0",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^3.3.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^2.2.1",
+    "uuid": "^9.0.1",
+    "ws": "^8.18.0",
+    "zustand": "^4.5.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "ai",
+    "image-generation",
+    "z-image-turbo",
+    "local-ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/node": "^25.0.10",
+    "@types/react": "^19.2.9",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "autoprefixer": "^10.4.23",
+    "concurrently": "^9.2.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  }
+}

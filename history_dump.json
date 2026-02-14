@@ -1,0 +1,302 @@
+{
+  "3588d139-e9ac-43fa-a211-9d40a08a6ae4": {
+    "prompt": [
+      282,
+      "3588d139-e9ac-43fa-a211-9d40a08a6ae4",
+      {
+        "1": {
+          "inputs": {
+            "gguf_name": "flux-2-klein-9b-Q4_K_M.gguf"
+          },
+          "class_type": "LoaderGGUF"
+        },
+        "2": {
+          "inputs": {
+            "clip_name": "qwen_3_8b_fp8mixed.safetensors",
+            "type": "flux2"
+          },
+          "class_type": "ClipLoaderGGUF"
+        },
+        "3": {
+          "inputs": {
+            "vae_name": "flux2-vae.safetensors"
+          },
+          "class_type": "VAELoader"
+        },
+        "4": {
+          "inputs": {
+            "text": "A beautiful scenery, high quality",
+            "clip": [
+              "100",
+              1
+            ]
+          },
+          "class_type": "CLIPTextEncode"
+        },
+        "5": {
+          "inputs": {
+            "text": "bad quality, blurry",
+            "clip": [
+              "100",
+              1
+            ]
+          },
+          "class_type": "CLIPTextEncode"
+        },
+        "6": {
+          "inputs": {
+            "noise": [
+              "60",
+              0
+            ],
+            "guider": [
+              "63",
+              0
+            ],
+            "sampler": [
+              "61",
+              0
+            ],
+            "sigmas": [
+              "62",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          },
+          "class_type": "SamplerCustomAdvanced"
+        },
+        "7": {
+          "inputs": {
+            "samples": [
+              "6",
+              0
+            ],
+            "vae": [
+              "3",
+              0
+            ]
+          },
+          "class_type": "VAEDecode"
+        },
+        "11": {
+          "inputs": {
+            "width": 1024,
+            "height": 1024,
+            "batch_size": 1
+          },
+          "class_type": "EmptyFlux2LatentImage"
+        },
+        "20": {
+          "inputs": {
+            "image": [
+              "7",
+              0
+            ],
+            "enable_upscale": false,
+            "upscale_model_path": "4x_foolhardy_Remacri.pth",
+            "downscale_by": 1.0,
+            "rescale_method": "lanczos",
+            "precision": "auto",
+            "batch_size": 1,
+            "enable_levels": false,
+            "exposure": 0.0,
+            "contrast": 1.0,
+            "saturation": 1.0,
+            "vibrance": 0.0,
+            "enable_color_wheels": false,
+            "lift_r": 0.0,
+            "lift_g": 0.0,
+            "lift_b": 0.0,
+            "gamma_r": 1.0,
+            "gamma_g": 1.0,
+            "gamma_b": 1.0,
+            "gain_r": 1.0,
+            "gain_g": 1.0,
+            "gain_b": 1.0,
+            "enable_temp_tint": false,
+            "temperature": 0.0,
+            "tint": 0.0,
+            "enable_sharpen": false,
+            "sharpen_strength": 0.0,
+            "sharpen_radius": 1.85,
+            "sharpen_threshold": 0.015,
+            "enable_vignette": false,
+            "vignette_strength": 0.0,
+            "vignette_radius": 0.7,
+            "vignette_softness": 2.0,
+            "enable_film_grain": false,
+            "grain_intensity": 0.0,
+            "grain_size": 0.25,
+            "grain_color_amount": 0.044,
+            "gamma": 1.0,
+            "brightness": 0.0,
+            "enable_small_glow": false,
+            "small_glow_intensity": 0.0,
+            "small_glow_radius": 0.0,
+            "small_glow_threshold": 0.0,
+            "enable_large_glow": false,
+            "large_glow_intensity": 0.0,
+            "large_glow_radius": 30.0,
+            "large_glow_threshold": 0.0,
+            "enable_glare": false,
+            "glare_type": "star_4",
+            "glare_intensity": 0.0,
+            "glare_length": 1.0,
+            "glare_angle": 0.0,
+            "glare_threshold": 0.0,
+            "glare_quality": 16,
+            "glare_ray_width": 1.0,
+            "enable_chromatic_aberration": false,
+            "ca_strength": 0.0,
+            "ca_edge_falloff": 2.0,
+            "enable_ca_hue_shift": false,
+            "ca_hue_shift_degrees": 0.0,
+            "enable_radial_blur": false,
+            "radial_blur_type": "spin",
+            "radial_blur_strength": 0.0,
+            "radial_blur_center_x": 0.5,
+            "radial_blur_center_y": 0.5,
+            "radial_blur_falloff": 0.05,
+            "radial_blur_samples": 16,
+            "enable_lens_distortion": false,
+            "barrel_distortion": 0.0,
+            "postprocess_ui": ""
+          },
+          "class_type": "CRT Post-Process Suite"
+        },
+        "60": {
+          "inputs": {
+            "noise_seed": 463434786770
+          },
+          "class_type": "RandomNoise"
+        },
+        "61": {
+          "inputs": {
+            "sampler_name": "euler"
+          },
+          "class_type": "KSamplerSelect"
+        },
+        "62": {
+          "inputs": {
+            "steps": 4,
+            "width": 1024,
+            "height": 1024
+          },
+          "class_type": "Flux2Scheduler"
+        },
+        "63": {
+          "inputs": {
+            "cfg": 1.0,
+            "model": [
+              "100",
+              0
+            ],
+            "positive": [
+              "4",
+              0
+            ],
+            "negative": [
+              "5",
+              0
+            ]
+          },
+          "class_type": "CFGGuider"
+        },
+        "100": {
+          "inputs": {
+            "lora_name": "V8.safetensors",
+            "strength_model": 1.0,
+            "strength_clip": 1.0,
+            "model": [
+              "1",
+              0
+            ],
+            "clip": [
+              "2",
+              0
+            ]
+          },
+          "class_type": "LoraLoader"
+        },
+        "Save": {
+          "inputs": {
+            "filename_prefix": "AIEGO",
+            "images": [
+              "20",
+              0
+            ]
+          },
+          "class_type": "SaveImage"
+        }
+      },
+      {
+        "client_id": "a8013ada-b202-454c-839c-2ea26a9c5c62",
+        "create_time": 1770393549379
+      },
+      [
+        "Save"
+      ]
+    ],
+    "outputs": {
+      "Save": {
+        "images": [
+          {
+            "filename": "AIEGO_00185_.png",
+            "subfolder": "",
+            "type": "output"
+          }
+        ]
+      }
+    },
+    "status": {
+      "status_str": "success",
+      "completed": true,
+      "messages": [
+        [
+          "execution_start",
+          {
+            "prompt_id": "3588d139-e9ac-43fa-a211-9d40a08a6ae4",
+            "timestamp": 1770393550733
+          }
+        ],
+        [
+          "execution_cached",
+          {
+            "nodes": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "11",
+              "61",
+              "62",
+              "63",
+              "100"
+            ],
+            "prompt_id": "3588d139-e9ac-43fa-a211-9d40a08a6ae4",
+            "timestamp": 1770393550736
+          }
+        ],
+        [
+          "execution_success",
+          {
+            "prompt_id": "3588d139-e9ac-43fa-a211-9d40a08a6ae4",
+            "timestamp": 1770393557611
+          }
+        ]
+      ]
+    },
+    "meta": {
+      "Save": {
+        "node_id": "Save",
+        "display_node": "Save",
+        "parent_node": null,
+        "real_node_id": "Save"
+      }
+    }
+  }
+}

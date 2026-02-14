@@ -1,0 +1,222 @@
+{
+  "ReFluxPatcher": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "style_dtype": [
+          [
+            "default",
+            "bfloat16",
+            "float16",
+            "float32",
+            "float64"
+          ],
+          {
+            "default": "float64"
+          }
+        ],
+        "enable": [
+          "BOOLEAN",
+          {
+            "default": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "style_dtype",
+        "enable"
+      ]
+    },
+    "output": [
+      "MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "model"
+    ],
+    "name": "ReFluxPatcher",
+    "display_name": "ReFluxPatcher",
+    "description": "",
+    "python_module": "custom_nodes.RES4LYF",
+    "category": "RES4LYF/model_patches",
+    "output_node": false
+  },
+  "FluxLoraBlocksPatcherAdvancedV2": "NOT FOUND",
+  "FluxSamplerParams+": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "conditioning": [
+          "CONDITIONING"
+        ],
+        "latent_image": [
+          "LATENT"
+        ],
+        "seed": [
+          "STRING",
+          {
+            "multiline": false,
+            "dynamicPrompts": false,
+            "default": "?"
+          }
+        ],
+        "sampler": [
+          "STRING",
+          {
+            "multiline": false,
+            "dynamicPrompts": false,
+            "default": "euler"
+          }
+        ],
+        "scheduler": [
+          "STRING",
+          {
+            "multiline": false,
+            "dynamicPrompts": false,
+            "default": "simple"
+          }
+        ],
+        "steps": [
+          "STRING",
+          {
+            "multiline": false,
+            "dynamicPrompts": false,
+            "default": "20"
+          }
+        ],
+        "guidance": [
+          "STRING",
+          {
+            "multiline": false,
+            "dynamicPrompts": false,
+            "default": "3.5"
+          }
+        ],
+        "max_shift": [
+          "STRING",
+          {
+            "multiline": false,
+            "dynamicPrompts": false,
+            "default": ""
+          }
+        ],
+        "base_shift": [
+          "STRING",
+          {
+            "multiline": false,
+            "dynamicPrompts": false,
+            "default": ""
+          }
+        ],
+        "denoise": [
+          "STRING",
+          {
+            "multiline": false,
+            "dynamicPrompts": false,
+            "default": "1.0"
+          }
+        ]
+      },
+      "optional": {
+        "loras": [
+          "LORA_PARAMS"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "conditioning",
+        "latent_image",
+        "seed",
+        "sampler",
+        "scheduler",
+        "steps",
+        "guidance",
+        "max_shift",
+        "base_shift",
+        "denoise"
+      ],
+      "optional": [
+        "loras"
+      ]
+    },
+    "output": [
+      "LATENT",
+      "SAMPLER_PARAMS"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "latent",
+      "params"
+    ],
+    "name": "FluxSamplerParams+",
+    "display_name": "\ud83d\udd27 Flux Sampler Parameters",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI_essentials",
+    "category": "essentials/sampling",
+    "output_node": false
+  },
+  "LorasForFluxParams+": {
+    "input": {
+      "required": {
+        "lora_1": [
+          [
+            "NSGIRL-FLUX-2-Klein-9B-LoRA-By-MM744.safetensors",
+            "V8.safetensors",
+            "bignosebeauties_fluxklein_b2_000001750.safetensors",
+            "k8zimage2k.safetensors",
+            "pixel_art_style_z_image_turbo.safetensors",
+            "rd$sk_NEW_2_000000700.safetensors",
+            "rd$sk_copy_000000300.safetensors",
+            "tmp_sid_xrxwmofkk_V8.safetensors"
+          ],
+          {
+            "tooltip": "The name of the LoRA."
+          }
+        ],
+        "strength_model_1": [
+          "STRING",
+          {
+            "multiline": false,
+            "dynamicPrompts": false,
+            "default": "1.0"
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "lora_1",
+        "strength_model_1"
+      ]
+    },
+    "output": [
+      "LORA_PARAMS"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "LORA_PARAMS"
+    ],
+    "name": "LorasForFluxParams+",
+    "display_name": "\ud83d\udd27 LoRA for Flux Parameters",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI_essentials",
+    "category": "essentials/sampling",
+    "output_node": false
+  }
+}

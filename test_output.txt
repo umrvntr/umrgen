@@ -1,0 +1,5 @@
+Sending test request to server...
+Response: {
+  "job_id": "d8cc9fb0-9e57-4cb5-bd69-9dcbe594b8ae"
+}
+Job created: d8cc9fb0-9e57-4cb5-bd69-9dcbe594b8ae. Check terminal logs for LoRA injection confirmation.

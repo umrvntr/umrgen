@@ -1,0 +1,119 @@
+[
+    {
+        "id": "prompt",
+        "title": "PROMPT DIRECTIVE",
+        "category": "CORE PARAMETER",
+        "definition": "Primary text command used to prime the neural network and establish the visual blueprint of the generated asset.",
+        "why_it_matters": "Determines the composition, subject matter, and stylistic foundation. Specificity reduces entropy and ensures structural adherence.",
+        "pro_tips": "Front-load critical data. Syntax: [subject] + [action] + [environment] + [lighting]. Use weights like (masterpiece:1.2) for priority control.",
+        "video_url": "https://youtube.com/@umrgen/prompt-guide"
+    },
+    {
+        "id": "negative",
+        "title": "NEGATIVE PROMPT",
+        "category": "CORE PARAMETER",
+        "definition": "A selective exclusion filter used to suppress specific visual artifacts, unwanted styles, or structural defects.",
+        "why_it_matters": "Essential for maintaining morphological integrity and preventing common AI deformities (extra limbs, blurry textures).",
+        "pro_tips": "Focus on anatomical stability and clarity. Avoid over-filtering as it can restrict creative variability and pose data conflicts.",
+        "video_url": "https://youtube.com/@umrgen/negative-prompt"
+    },
+    {
+        "id": "lora",
+        "title": "LORA UNIT",
+        "category": "SPECIALIZED MODULE",
+        "definition": "Low-Rank Adaptation modules that inject specialized knowledge (objects, characters, or art styles) into the base model.",
+        "why_it_matters": "Allows for precise control over consistency. Enables the generation of niche subjects not fully encoded in the primary model.",
+        "pro_tips": "Limit active units to 2-3 to avoid stylistic interference. Multi-LoRA setups require careful strength balancing.",
+        "video_url": "https://youtube.com/@umrgen/lora-guide"
+    },
+    {
+        "id": "lora_strength",
+        "title": "LORA STRENGTH",
+        "category": "MODULE CONTROL",
+        "definition": "Voltage control for the active LoRA unit, determining the influence of its specialized weight data on the final output.",
+        "why_it_matters": "Critical for finding the 'sweet spot' between stylistic injection and structural stability. Too high leads to 'burned' results.",
+        "pro_tips": "Nominal range: 0.6 - 0.8. If the base model starts losing coherence, decrease strength immediately.",
+        "video_url": "https://youtube.com/@umrgen/strength-control"
+    },
+    {
+        "id": "seed",
+        "title": "RANDOM SEED",
+        "category": "MATHEMATICAL ANCHOR",
+        "definition": "The numerical starting point for the noise-to-image synthesis cycle. Determines the initial layout of pixels.",
+        "why_it_matters": "Ensures reproducibility. Locking the seed allows for surgical changes to prompts while keeping the overall composition fixed.",
+        "pro_tips": "Set to -1 for maximum entropy. Fix the seed to iterate on lighting or clothing while maintaining character pose.",
+        "video_url": "https://youtube.com/@umrgen/seed-mechanics"
+    },
+    {
+        "id": "dimensions",
+        "title": "ASPECT RATIO",
+        "category": "COMPOSITION FRAME",
+        "definition": "Spatial dimensions of the generation canvas. Defines the horizontal and vertical boundaries of the visual field.",
+        "why_it_matters": "Composition is mathematically tied to the frame. Changing ratios shifts the focus of the neural attention map.",
+        "pro_tips": "Use 21:9 for cinematic panoramas and 9:16 for mobile-optimized vertical feeds. Subject-to-frame ratio is key.",
+        "video_url": "https://youtube.com/@umrgen/aspect-ratios"
+    },
+    {
+        "id": "face_detailer",
+        "title": "FACE DETAILER",
+        "category": "PIPELINE ADAPTER",
+        "definition": "A secondary high-resolution pass that utilizes face-detection algorithms to re-synthesize facial features at micro-scale.",
+        "why_it_matters": "Eliminates facial degradation in wide shots. Restores anatomical accuracy and photographic clarity to human subjects.",
+        "pro_tips": "Essential for professional output. Set denoise to 0.45 for the perfect balance of detail and natural skin texture.",
+        "video_url": "https://youtube.com/@umrgen/facedetailer"
+    },
+    {
+        "id": "upscale",
+        "title": "RESOLUTION SYNTHESIS",
+        "category": "OUTPUT ENHANCEMENT",
+        "definition": "Large-scale neural enlargement that injects sub-pixel detail and high-frequency textures into the final asset.",
+        "why_it_matters": "Base generations are low resolution. Upscaling is required for high-fidelity printing and 4K digital displays.",
+        "pro_tips": "Explore concepts at base resolution (fast) and only commit to Upscaling for finalized assets to save system uptime.",
+        "video_url": "https://youtube.com/@umrgen/upscaling"
+    },
+    {
+        "id": "post_processing",
+        "title": "LIGHTING GRADE",
+        "category": "POST-SYNTHESIS",
+        "definition": "Final stage luminosity and color grading adjustments. Simulates real-world optical effects and camera sensor properties.",
+        "why_it_matters": "Provides the 'finished' photographic feel. Hides digital smoothness and anchors the image in a physical reality.",
+        "pro_tips": "Use subtle Film Grain to blend neural artifacts. A slight Vignette focuses visual attention on the primary subject.",
+        "video_url": "https://youtube.com/@umrgen/post-processing"
+    },
+    {
+        "id": "sampler",
+        "title": "SAMPLING ENGINE",
+        "category": "CORE MATHEMATICS",
+        "definition": "The mathematical algorithm responsible for navigating the latent space to resolve an image from pure noise.",
+        "why_it_matters": "Different engines have different 'trajectories', resulting in different textures, sharpness, and stylistic biases.",
+        "pro_tips": "Euler is the fastest reliable path. DPM++ 2M is optimized for maximum textural detail in realistic renders.",
+        "video_url": "https://youtube.com/@umrgen/samplers"
+    },
+    {
+        "id": "steps",
+        "title": "ITERATION STEPS",
+        "category": "REFINEMENT CYCLE",
+        "definition": "The number of sequential passes the AI makes to clarify and refine the visual representation.",
+        "why_it_matters": "Determines total refinement depth. Too few steps result in muddy noise; too many result in diminishing returns.",
+        "pro_tips": "UMRGEN-v0.8 is hyper-optimized for 4-12 steps. Increasing steps beyond absolute necessity wastes compute cycles.",
+        "video_url": "https://youtube.com/@umrgen/steps-iterations"
+    },
+    {
+        "id": "upscale_factor",
+        "title": "SCALE MAGNITUDE",
+        "category": "OUTPUT ENHANCEMENT",
+        "definition": "The multiplication factor applied to the base resolution during the neural upscaling pass.",
+        "why_it_matters": "Determines final pixel density. X2 is optimal for web/social; X4 is intensive but necessary for large-format print.",
+        "pro_tips": "Synthesis time scales exponentially with magnitude. Balance your requirement for detail against processing time.",
+        "video_url": "https://youtube.com/@umrgen/upscaling-depth"
+    },
+    {
+        "id": "interface",
+        "title": "INTERFACE LOGIC",
+        "category": "SYSTEM CONTROL",
+        "definition": "Global application behavior and accessibility settings, including the interactive Learning Mode toggle.",
+        "why_it_matters": "Enables customization of the operator experience. Learning Mode provides real-time tactical data on all parameters.",
+        "pro_tips": "Keep Learning Mode active during system onboarding. Disable once parameter behavior is fully internalized.",
+        "video_url": "https://youtube.com/@umrgen/interface-guide"
+    }
+]

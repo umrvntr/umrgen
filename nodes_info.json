@@ -1,0 +1,735 @@
+{
+  "LorasForFluxParams+": {
+    "input": {
+      "required": {
+        "lora_1": [
+          [
+            "NSGIRL-FLUX-2-Klein-9B-LoRA-By-MM744.safetensors",
+            "V8.safetensors",
+            "bignosebeauties_fluxklein_b2_000001750.safetensors",
+            "k8zimage2k.safetensors",
+            "pixel_art_style_z_image_turbo.safetensors",
+            "rd$sk_NEW_2_000000700.safetensors",
+            "rd$sk_copy_000000300.safetensors",
+            "tmp_sid_xrxwmofkk_V8.safetensors"
+          ],
+          {
+            "tooltip": "The name of the LoRA."
+          }
+        ],
+        "strength_model_1": [
+          "STRING",
+          {
+            "multiline": false,
+            "dynamicPrompts": false,
+            "default": "1.0"
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "lora_1",
+        "strength_model_1"
+      ]
+    },
+    "output": [
+      "LORA_PARAMS"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "LORA_PARAMS"
+    ],
+    "name": "LorasForFluxParams+",
+    "display_name": "\ud83d\udd27 LoRA for Flux Parameters",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI_essentials",
+    "category": "essentials/sampling",
+    "output_node": false
+  },
+  "FluxLoraBlocksPatcher": {
+    "input": {
+      "required": {
+        "flux_model": [
+          "MODEL"
+        ],
+        "lora_block_0_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_1_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_2_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_3_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_4_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_5_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_6_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_7_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_8_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_9_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_10_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_11_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_12_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_13_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_14_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_15_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_16_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_17_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_18_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_19_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_20_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_21_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_22_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_23_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_24_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_25_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_26_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_27_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_28_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_29_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_30_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_31_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_32_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_33_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_34_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_35_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_36_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_37_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_0_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_1_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_2_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_3_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_4_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_5_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_6_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_7_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_8_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_9_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_10_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_11_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_12_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_13_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_14_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_15_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_16_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_17_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ],
+        "lora_block_18_double_weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "flux_model",
+        "lora_block_0_weight",
+        "lora_block_1_weight",
+        "lora_block_2_weight",
+        "lora_block_3_weight",
+        "lora_block_4_weight",
+        "lora_block_5_weight",
+        "lora_block_6_weight",
+        "lora_block_7_weight",
+        "lora_block_8_weight",
+        "lora_block_9_weight",
+        "lora_block_10_weight",
+        "lora_block_11_weight",
+        "lora_block_12_weight",
+        "lora_block_13_weight",
+        "lora_block_14_weight",
+        "lora_block_15_weight",
+        "lora_block_16_weight",
+        "lora_block_17_weight",
+        "lora_block_18_weight",
+        "lora_block_19_weight",
+        "lora_block_20_weight",
+        "lora_block_21_weight",
+        "lora_block_22_weight",
+        "lora_block_23_weight",
+        "lora_block_24_weight",
+        "lora_block_25_weight",
+        "lora_block_26_weight",
+        "lora_block_27_weight",
+        "lora_block_28_weight",
+        "lora_block_29_weight",
+        "lora_block_30_weight",
+        "lora_block_31_weight",
+        "lora_block_32_weight",
+        "lora_block_33_weight",
+        "lora_block_34_weight",
+        "lora_block_35_weight",
+        "lora_block_36_weight",
+        "lora_block_37_weight",
+        "lora_block_0_double_weight",
+        "lora_block_1_double_weight",
+        "lora_block_2_double_weight",
+        "lora_block_3_double_weight",
+        "lora_block_4_double_weight",
+        "lora_block_5_double_weight",
+        "lora_block_6_double_weight",
+        "lora_block_7_double_weight",
+        "lora_block_8_double_weight",
+        "lora_block_9_double_weight",
+        "lora_block_10_double_weight",
+        "lora_block_11_double_weight",
+        "lora_block_12_double_weight",
+        "lora_block_13_double_weight",
+        "lora_block_14_double_weight",
+        "lora_block_15_double_weight",
+        "lora_block_16_double_weight",
+        "lora_block_17_double_weight",
+        "lora_block_18_double_weight"
+      ]
+    },
+    "output": [
+      "MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "patched_model"
+    ],
+    "name": "FluxLoraBlocksPatcher",
+    "display_name": "Flux LoRA Blocks Patcher (CRT)",
+    "description": "",
+    "python_module": "custom_nodes.crt-nodes",
+    "category": "CRT/LoRA",
+    "output_node": false
+  },
+  "LoraLoader": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL",
+          {
+            "tooltip": "The diffusion model the LoRA will be applied to."
+          }
+        ],
+        "clip": [
+          "CLIP",
+          {
+            "tooltip": "The CLIP model the LoRA will be applied to."
+          }
+        ],
+        "lora_name": [
+          [
+            "NSGIRL-FLUX-2-Klein-9B-LoRA-By-MM744.safetensors",
+            "V8.safetensors",
+            "bignosebeauties_fluxklein_b2_000001750.safetensors",
+            "k8zimage2k.safetensors",
+            "pixel_art_style_z_image_turbo.safetensors",
+            "rd$sk_NEW_2_000000700.safetensors",
+            "rd$sk_copy_000000300.safetensors",
+            "tmp_sid_xrxwmofkk_V8.safetensors"
+          ],
+          {
+            "tooltip": "The name of the LoRA."
+          }
+        ],
+        "strength_model": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -100.0,
+            "max": 100.0,
+            "step": 0.01,
+            "tooltip": "How strongly to modify the diffusion model. This value can be negative."
+          }
+        ],
+        "strength_clip": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -100.0,
+            "max": 100.0,
+            "step": 0.01,
+            "tooltip": "How strongly to modify the CLIP model. This value can be negative."
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "clip",
+        "lora_name",
+        "strength_model",
+        "strength_clip"
+      ]
+    },
+    "output": [
+      "MODEL",
+      "CLIP"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "MODEL",
+      "CLIP"
+    ],
+    "name": "LoraLoader",
+    "display_name": "Load LoRA",
+    "description": "LoRAs are used to modify diffusion and CLIP models, altering the way in which latents are denoised such as applying styles. Multiple LoRA nodes can be linked together.",
+    "python_module": "nodes",
+    "category": "loaders",
+    "output_node": false,
+    "output_tooltips": [
+      "The modified diffusion model.",
+      "The modified CLIP model."
+    ]
+  }
+}

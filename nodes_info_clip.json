@@ -1,0 +1,4511 @@
+{
+  "CLIPTextEncode": {
+    "input": {
+      "required": {
+        "text": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true,
+            "tooltip": "The text to be encoded."
+          }
+        ],
+        "clip": [
+          "CLIP",
+          {
+            "tooltip": "The CLIP model used for encoding the text."
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "text",
+        "clip"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "name": "CLIPTextEncode",
+    "display_name": "CLIP Text Encode (Prompt)",
+    "description": "Encodes a text prompt using a CLIP model into an embedding that can be used to guide the diffusion model towards generating specific images.",
+    "python_module": "nodes",
+    "category": "conditioning",
+    "output_node": false,
+    "output_tooltips": [
+      "A conditioning containing the embedded text used to guide the diffusion model."
+    ]
+  },
+  "CLIPSetLastLayer": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP"
+        ],
+        "stop_at_clip_layer": [
+          "INT",
+          {
+            "default": -1,
+            "min": -24,
+            "max": -1,
+            "step": 1
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "stop_at_clip_layer"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "CLIPSetLastLayer",
+    "display_name": "CLIP Set Last Layer",
+    "description": "",
+    "python_module": "nodes",
+    "category": "conditioning",
+    "output_node": false
+  },
+  "CLIPLoader": {
+    "input": {
+      "required": {
+        "clip_name": [
+          [
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "type": [
+          [
+            "stable_diffusion",
+            "stable_cascade",
+            "sd3",
+            "stable_audio",
+            "mochi",
+            "ltxv",
+            "pixart",
+            "cosmos",
+            "lumina2",
+            "wan",
+            "hidream",
+            "chroma",
+            "ace",
+            "omnigen2",
+            "qwen_image",
+            "hunyuan_image",
+            "flux2",
+            "ovis"
+          ]
+        ]
+      },
+      "optional": {
+        "device": [
+          [
+            "default",
+            "cpu"
+          ],
+          {
+            "advanced": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_name",
+        "type"
+      ],
+      "optional": [
+        "device"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "CLIPLoader",
+    "display_name": "Load CLIP",
+    "description": "[Recipes]\n\nstable_diffusion: clip-l\nstable_cascade: clip-g\nsd3: t5 xxl/ clip-g / clip-l\nstable_audio: t5 base\nmochi: t5 xxl\ncosmos: old t5 xxl\nlumina2: gemma 2 2B\nwan: umt5 xxl\n hidream: llama-3.1 (Recommend) or t5\nomnigen2: qwen vl 2.5 3B",
+    "python_module": "nodes",
+    "category": "advanced/loaders",
+    "output_node": false
+  },
+  "DualCLIPLoader": {
+    "input": {
+      "required": {
+        "clip_name1": [
+          [
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "clip_name2": [
+          [
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "type": [
+          [
+            "sdxl",
+            "sd3",
+            "flux",
+            "hunyuan_video",
+            "hidream",
+            "hunyuan_image",
+            "hunyuan_video_15",
+            "kandinsky5",
+            "kandinsky5_image",
+            "ltxv",
+            "newbie"
+          ]
+        ]
+      },
+      "optional": {
+        "device": [
+          [
+            "default",
+            "cpu"
+          ],
+          {
+            "advanced": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_name1",
+        "clip_name2",
+        "type"
+      ],
+      "optional": [
+        "device"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "DualCLIPLoader",
+    "display_name": "DualCLIPLoader",
+    "description": "[Recipes]\n\nsdxl: clip-l, clip-g\nsd3: clip-l, clip-g / clip-l, t5 / clip-g, t5\nflux: clip-l, t5\nhidream: at least one of t5 or llama, recommended t5 and llama\nhunyuan_image: qwen2.5vl 7b and byt5 small\nnewbie: gemma-3-4b-it, jina clip v2",
+    "python_module": "nodes",
+    "category": "advanced/loaders",
+    "output_node": false
+  },
+  "CLIPVisionEncode": {
+    "input": {
+      "required": {
+        "clip_vision": [
+          "CLIP_VISION"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "crop": [
+          [
+            "center",
+            "none"
+          ]
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_vision",
+        "image",
+        "crop"
+      ]
+    },
+    "output": [
+      "CLIP_VISION_OUTPUT"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP_VISION_OUTPUT"
+    ],
+    "name": "CLIPVisionEncode",
+    "display_name": "CLIP Vision Encode",
+    "description": "",
+    "python_module": "nodes",
+    "category": "conditioning",
+    "output_node": false
+  },
+  "unCLIPConditioning": {
+    "input": {
+      "required": {
+        "conditioning": [
+          "CONDITIONING"
+        ],
+        "clip_vision_output": [
+          "CLIP_VISION_OUTPUT"
+        ],
+        "strength": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -10.0,
+            "max": 10.0,
+            "step": 0.01
+          }
+        ],
+        "noise_augmentation": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.01
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "conditioning",
+        "clip_vision_output",
+        "strength",
+        "noise_augmentation"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "name": "unCLIPConditioning",
+    "display_name": "unCLIPConditioning",
+    "description": "",
+    "python_module": "nodes",
+    "category": "conditioning",
+    "output_node": false
+  },
+  "CLIPVisionLoader": {
+    "input": {
+      "required": {
+        "clip_name": [
+          []
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_name"
+      ]
+    },
+    "output": [
+      "CLIP_VISION"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP_VISION"
+    ],
+    "name": "CLIPVisionLoader",
+    "display_name": "Load CLIP Vision",
+    "description": "",
+    "python_module": "nodes",
+    "category": "loaders",
+    "output_node": false
+  },
+  "unCLIPCheckpointLoader": {
+    "input": {
+      "required": {
+        "ckpt_name": [
+          [
+            "lustifySDXLNSFW_endgame.safetensors"
+          ]
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "ckpt_name"
+      ]
+    },
+    "output": [
+      "MODEL",
+      "CLIP",
+      "VAE",
+      "CLIP_VISION"
+    ],
+    "output_is_list": [
+      false,
+      false,
+      false,
+      false
+    ],
+    "output_name": [
+      "MODEL",
+      "CLIP",
+      "VAE",
+      "CLIP_VISION"
+    ],
+    "name": "unCLIPCheckpointLoader",
+    "display_name": "unCLIPCheckpointLoader",
+    "description": "",
+    "python_module": "nodes",
+    "category": "loaders",
+    "output_node": false
+  },
+  "CLIPMergeSimple": {
+    "input": {
+      "required": {
+        "clip1": [
+          "CLIP"
+        ],
+        "clip2": [
+          "CLIP"
+        ],
+        "ratio": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.01
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip1",
+        "clip2",
+        "ratio"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "CLIPMergeSimple",
+    "display_name": "CLIPMergeSimple",
+    "description": "",
+    "python_module": "comfy_extras.nodes_model_merging",
+    "category": "advanced/model_merging",
+    "output_node": false
+  },
+  "CLIPMergeSubtract": {
+    "input": {
+      "required": {
+        "clip1": [
+          "CLIP"
+        ],
+        "clip2": [
+          "CLIP"
+        ],
+        "multiplier": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -10.0,
+            "max": 10.0,
+            "step": 0.01
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip1",
+        "clip2",
+        "multiplier"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "CLIPMergeSubtract",
+    "display_name": "CLIPMergeSubtract",
+    "description": "",
+    "python_module": "comfy_extras.nodes_model_merging",
+    "category": "advanced/model_merging",
+    "output_node": false
+  },
+  "CLIPMergeAdd": {
+    "input": {
+      "required": {
+        "clip1": [
+          "CLIP"
+        ],
+        "clip2": [
+          "CLIP"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip1",
+        "clip2"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "CLIPMergeAdd",
+    "display_name": "CLIPMergeAdd",
+    "description": "",
+    "python_module": "comfy_extras.nodes_model_merging",
+    "category": "advanced/model_merging",
+    "output_node": false
+  },
+  "CLIPSave": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP"
+        ],
+        "filename_prefix": [
+          "STRING",
+          {
+            "default": "clip/ComfyUI"
+          }
+        ]
+      },
+      "hidden": {
+        "prompt": "PROMPT",
+        "extra_pnginfo": "EXTRA_PNGINFO"
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "filename_prefix"
+      ],
+      "hidden": [
+        "prompt",
+        "extra_pnginfo"
+      ]
+    },
+    "output": [],
+    "output_is_list": [],
+    "output_name": [],
+    "name": "CLIPSave",
+    "display_name": "CLIPSave",
+    "description": "",
+    "python_module": "comfy_extras.nodes_model_merging",
+    "category": "advanced/model_merging",
+    "output_node": true
+  },
+  "CLIPTextEncodeSDXLRefiner": {
+    "input": {
+      "required": {
+        "ascore": [
+          "FLOAT",
+          {
+            "default": 6.0,
+            "min": 0.0,
+            "max": 1000.0,
+            "step": 0.01
+          }
+        ],
+        "width": [
+          "INT",
+          {
+            "default": 1024,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "height": [
+          "INT",
+          {
+            "default": 1024,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "text": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "clip": [
+          "CLIP",
+          {}
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "ascore",
+        "width",
+        "height",
+        "text",
+        "clip"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "output_tooltips": [
+      null
+    ],
+    "output_matchtypes": null,
+    "name": "CLIPTextEncodeSDXLRefiner",
+    "display_name": null,
+    "description": "",
+    "python_module": "comfy_extras.nodes_clip_sdxl",
+    "category": "advanced/conditioning",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false,
+    "price_badge": null
+  },
+  "CLIPTextEncodeSDXL": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP",
+          {}
+        ],
+        "width": [
+          "INT",
+          {
+            "default": 1024,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "height": [
+          "INT",
+          {
+            "default": 1024,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "crop_w": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "crop_h": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "target_width": [
+          "INT",
+          {
+            "default": 1024,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "target_height": [
+          "INT",
+          {
+            "default": 1024,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "text_g": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "text_l": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "width",
+        "height",
+        "crop_w",
+        "crop_h",
+        "target_width",
+        "target_height",
+        "text_g",
+        "text_l"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "output_tooltips": [
+      null
+    ],
+    "output_matchtypes": null,
+    "name": "CLIPTextEncodeSDXL",
+    "display_name": null,
+    "description": "",
+    "python_module": "comfy_extras.nodes_clip_sdxl",
+    "category": "advanced/conditioning",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false,
+    "price_badge": null
+  },
+  "CLIPTextEncodePixArtAlpha": {
+    "input": {
+      "required": {
+        "width": [
+          "INT",
+          {
+            "default": 1024,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "height": [
+          "INT",
+          {
+            "default": 1024,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "text": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "clip": [
+          "CLIP",
+          {}
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "width",
+        "height",
+        "text",
+        "clip"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "output_tooltips": [
+      null
+    ],
+    "output_matchtypes": null,
+    "name": "CLIPTextEncodePixArtAlpha",
+    "display_name": null,
+    "description": "Encodes text and sets the resolution conditioning for PixArt Alpha. Does not apply to PixArt Sigma.",
+    "python_module": "comfy_extras.nodes_pixart",
+    "category": "advanced/conditioning",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false,
+    "price_badge": null
+  },
+  "CLIPTextEncodeControlnet": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP",
+          {}
+        ],
+        "conditioning": [
+          "CONDITIONING",
+          {}
+        ],
+        "text": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "conditioning",
+        "text"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "output_tooltips": [
+      null
+    ],
+    "output_matchtypes": null,
+    "name": "CLIPTextEncodeControlnet",
+    "display_name": null,
+    "description": "",
+    "python_module": "comfy_extras.nodes_cond",
+    "category": "_for_testing/conditioning",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": true,
+    "api_node": false,
+    "price_badge": null
+  },
+  "CLIPAttentionMultiply": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP",
+          {}
+        ],
+        "q": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.01
+          }
+        ],
+        "k": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.01
+          }
+        ],
+        "v": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.01
+          }
+        ],
+        "out": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.01
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "q",
+        "k",
+        "v",
+        "out"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "output_tooltips": [
+      null
+    ],
+    "output_matchtypes": null,
+    "name": "CLIPAttentionMultiply",
+    "display_name": null,
+    "description": "",
+    "python_module": "comfy_extras.nodes_attention_multiply",
+    "category": "_for_testing/attention_experiments",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": true,
+    "api_node": false,
+    "price_badge": null
+  },
+  "TripleCLIPLoader": {
+    "input": {
+      "required": {
+        "clip_name1": [
+          "COMBO",
+          {
+            "multiselect": false,
+            "options": [
+              "qwen_3_4b.safetensors",
+              "qwen_3_8b_fp8mixed.safetensors"
+            ]
+          }
+        ],
+        "clip_name2": [
+          "COMBO",
+          {
+            "multiselect": false,
+            "options": [
+              "qwen_3_4b.safetensors",
+              "qwen_3_8b_fp8mixed.safetensors"
+            ]
+          }
+        ],
+        "clip_name3": [
+          "COMBO",
+          {
+            "multiselect": false,
+            "options": [
+              "qwen_3_4b.safetensors",
+              "qwen_3_8b_fp8mixed.safetensors"
+            ]
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_name1",
+        "clip_name2",
+        "clip_name3"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "output_tooltips": [
+      null
+    ],
+    "output_matchtypes": null,
+    "name": "TripleCLIPLoader",
+    "display_name": null,
+    "description": "[Recipes]\n\nsd3: clip-l, clip-g, t5",
+    "python_module": "comfy_extras.nodes_sd3",
+    "category": "advanced/loaders",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false,
+    "price_badge": null
+  },
+  "CLIPTextEncodeSD3": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP",
+          {}
+        ],
+        "clip_l": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "clip_g": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "t5xxl": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "empty_padding": [
+          "COMBO",
+          {
+            "multiselect": false,
+            "options": [
+              "none",
+              "empty_prompt"
+            ]
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "clip_l",
+        "clip_g",
+        "t5xxl",
+        "empty_padding"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "output_tooltips": [
+      null
+    ],
+    "output_matchtypes": null,
+    "name": "CLIPTextEncodeSD3",
+    "display_name": null,
+    "description": "",
+    "python_module": "comfy_extras.nodes_sd3",
+    "category": "advanced/conditioning",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false,
+    "price_badge": null
+  },
+  "CLIPTextEncodeHunyuanDiT": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP",
+          {}
+        ],
+        "bert": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "mt5xl": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "bert",
+        "mt5xl"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "output_tooltips": [
+      null
+    ],
+    "output_matchtypes": null,
+    "name": "CLIPTextEncodeHunyuanDiT",
+    "display_name": null,
+    "description": "",
+    "python_module": "comfy_extras.nodes_hunyuan",
+    "category": "advanced/conditioning",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false,
+    "price_badge": null
+  },
+  "CLIPTextEncodeFlux": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP",
+          {}
+        ],
+        "clip_l": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "t5xxl": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "guidance": [
+          "FLOAT",
+          {
+            "default": 3.5,
+            "min": 0.0,
+            "max": 100.0,
+            "step": 0.1
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "clip_l",
+        "t5xxl",
+        "guidance"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "output_tooltips": [
+      null
+    ],
+    "output_matchtypes": null,
+    "name": "CLIPTextEncodeFlux",
+    "display_name": null,
+    "description": "",
+    "python_module": "comfy_extras.nodes_flux",
+    "category": "advanced/conditioning/flux",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false,
+    "price_badge": null
+  },
+  "SetClipHooks": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP"
+        ],
+        "apply_to_conds": [
+          "BOOLEAN",
+          {
+            "default": true
+          }
+        ],
+        "schedule_clip": [
+          "BOOLEAN",
+          {
+            "default": false
+          }
+        ]
+      },
+      "optional": {
+        "hooks": [
+          "HOOKS"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "apply_to_conds",
+        "schedule_clip"
+      ],
+      "optional": [
+        "hooks"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "SetClipHooks",
+    "display_name": "Set CLIP Hooks",
+    "description": "",
+    "python_module": "comfy_extras.nodes_hooks",
+    "category": "advanced/hooks/clip",
+    "output_node": false,
+    "experimental": true
+  },
+  "CLIPTextEncodeLumina2": {
+    "input": {
+      "required": {
+        "system_prompt": [
+          "COMBO",
+          {
+            "tooltip": "Lumina2 provide two types of system prompts:Superior: You are an assistant designed to generate superior images with the superior degree of image-text alignment based on textual prompts or user prompts. Alignment: You are an assistant designed to generate high-quality images with the highest degree of image-text alignment based on textual prompts.",
+            "multiselect": false,
+            "options": [
+              "superior",
+              "alignment"
+            ]
+          }
+        ],
+        "user_prompt": [
+          "STRING",
+          {
+            "tooltip": "The text to be encoded.",
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "clip": [
+          "CLIP",
+          {
+            "tooltip": "The CLIP model used for encoding the text."
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "system_prompt",
+        "user_prompt",
+        "clip"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "output_tooltips": [
+      "A conditioning containing the embedded text used to guide the diffusion model."
+    ],
+    "output_matchtypes": null,
+    "name": "CLIPTextEncodeLumina2",
+    "display_name": "CLIP Text Encode for Lumina2",
+    "description": "Encodes a system prompt and a user prompt using a CLIP model into an embedding that can be used to guide the diffusion model towards generating specific images.",
+    "python_module": "comfy_extras.nodes_lumina2",
+    "category": "conditioning",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false,
+    "price_badge": null
+  },
+  "QuadrupleCLIPLoader": {
+    "input": {
+      "required": {
+        "clip_name1": [
+          "COMBO",
+          {
+            "multiselect": false,
+            "options": [
+              "qwen_3_4b.safetensors",
+              "qwen_3_8b_fp8mixed.safetensors"
+            ]
+          }
+        ],
+        "clip_name2": [
+          "COMBO",
+          {
+            "multiselect": false,
+            "options": [
+              "qwen_3_4b.safetensors",
+              "qwen_3_8b_fp8mixed.safetensors"
+            ]
+          }
+        ],
+        "clip_name3": [
+          "COMBO",
+          {
+            "multiselect": false,
+            "options": [
+              "qwen_3_4b.safetensors",
+              "qwen_3_8b_fp8mixed.safetensors"
+            ]
+          }
+        ],
+        "clip_name4": [
+          "COMBO",
+          {
+            "multiselect": false,
+            "options": [
+              "qwen_3_4b.safetensors",
+              "qwen_3_8b_fp8mixed.safetensors"
+            ]
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_name1",
+        "clip_name2",
+        "clip_name3",
+        "clip_name4"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "output_tooltips": [
+      null
+    ],
+    "output_matchtypes": null,
+    "name": "QuadrupleCLIPLoader",
+    "display_name": null,
+    "description": "[Recipes]\n\nhidream: long clip-l, long clip-g, t5xxl, llama_8b_3.1_instruct",
+    "python_module": "comfy_extras.nodes_hidream",
+    "category": "advanced/loaders",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false,
+    "price_badge": null
+  },
+  "CLIPTextEncodeHiDream": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP",
+          {}
+        ],
+        "clip_l": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "clip_g": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "t5xxl": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "llama": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "clip_l",
+        "clip_g",
+        "t5xxl",
+        "llama"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "output_tooltips": [
+      null
+    ],
+    "output_matchtypes": null,
+    "name": "CLIPTextEncodeHiDream",
+    "display_name": null,
+    "description": "",
+    "python_module": "comfy_extras.nodes_hidream",
+    "category": "advanced/conditioning",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false,
+    "price_badge": null
+  },
+  "CLIPTextEncodeKandinsky5": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP",
+          {}
+        ],
+        "clip_l": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "qwen25_7b": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "clip_l",
+        "qwen25_7b"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "output_tooltips": [
+      null
+    ],
+    "output_matchtypes": null,
+    "name": "CLIPTextEncodeKandinsky5",
+    "display_name": null,
+    "description": "",
+    "python_module": "comfy_extras.nodes_kandinsky5",
+    "category": "advanced/conditioning/kandinsky5",
+    "output_node": false,
+    "deprecated": false,
+    "experimental": false,
+    "api_node": false,
+    "price_badge": null
+  },
+  "ADE_AttachLoraHookToCLIP": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP"
+        ],
+        "lora_hook": [
+          "HOOKS"
+        ]
+      },
+      "optional": {
+        "deprecation_warning": [
+          "ADEWARN",
+          {
+            "text": "Deprecated - use native ComfyUI nodes instead."
+          }
+        ]
+      },
+      "hidden": {
+        "autosize": [
+          "ADEAUTOSIZE",
+          {
+            "padding": 0
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "lora_hook"
+      ],
+      "optional": [
+        "deprecation_warning"
+      ],
+      "hidden": [
+        "autosize"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "hook_CLIP"
+    ],
+    "name": "ADE_AttachLoraHookToCLIP",
+    "display_name": "Set CLIP LoRA Hook \ud83c\udfad\ud83c\udd50\ud83c\udd53",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI-AnimateDiff-Evolved",
+    "category": "Animate Diff \ud83c\udfad\ud83c\udd50\ud83c\udd53/conditioning",
+    "output_node": false,
+    "deprecated": true
+  },
+  "CLIPLoaderGGUF": {
+    "input": {
+      "required": {
+        "clip_name": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "type": [
+          [
+            "stable_diffusion",
+            "stable_cascade",
+            "sd3",
+            "stable_audio",
+            "mochi",
+            "ltxv",
+            "pixart",
+            "cosmos",
+            "lumina2",
+            "wan",
+            "hidream",
+            "chroma",
+            "ace",
+            "omnigen2",
+            "qwen_image",
+            "hunyuan_image",
+            "flux2",
+            "ovis"
+          ]
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_name",
+        "type"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "CLIPLoaderGGUF",
+    "display_name": "CLIPLoader (GGUF)",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI-GGUF",
+    "category": "bootleg",
+    "output_node": false
+  },
+  "DualCLIPLoaderGGUF": {
+    "input": {
+      "required": {
+        "clip_name1": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "clip_name2": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "type": [
+          [
+            "sdxl",
+            "sd3",
+            "flux",
+            "hunyuan_video",
+            "hidream",
+            "hunyuan_image",
+            "hunyuan_video_15",
+            "kandinsky5",
+            "kandinsky5_image",
+            "ltxv",
+            "newbie"
+          ]
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_name1",
+        "clip_name2",
+        "type"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "DualCLIPLoaderGGUF",
+    "display_name": "DualCLIPLoader (GGUF)",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI-GGUF",
+    "category": "bootleg",
+    "output_node": false
+  },
+  "TripleCLIPLoaderGGUF": {
+    "input": {
+      "required": {
+        "clip_name1": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "clip_name2": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "clip_name3": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_name1",
+        "clip_name2",
+        "clip_name3"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "TripleCLIPLoaderGGUF",
+    "display_name": "TripleCLIPLoader (GGUF)",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI-GGUF",
+    "category": "bootleg",
+    "output_node": false
+  },
+  "QuadrupleCLIPLoaderGGUF": {
+    "input": {
+      "required": {
+        "clip_name1": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "clip_name2": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "clip_name3": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "clip_name4": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_name1",
+        "clip_name2",
+        "clip_name3",
+        "clip_name4"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "QuadrupleCLIPLoaderGGUF",
+    "display_name": "QuadrupleCLIPLoader (GGUF)",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI-GGUF",
+    "category": "bootleg",
+    "output_node": false
+  },
+  "CLIPSegDetectorProvider": {
+    "input": {
+      "required": {
+        "text": [
+          "STRING",
+          {
+            "multiline": false,
+            "tooltip": "Enter the targets to be detected, separated by commas"
+          }
+        ],
+        "blur": [
+          "FLOAT",
+          {
+            "min": 0,
+            "max": 15,
+            "step": 0.1,
+            "default": 7,
+            "tooltip": "Blurs the detected mask"
+          }
+        ],
+        "threshold": [
+          "FLOAT",
+          {
+            "min": 0,
+            "max": 1,
+            "step": 0.05,
+            "default": 0.4,
+            "tooltip": "Detects only areas that are certain above the threshold."
+          }
+        ],
+        "dilation_factor": [
+          "INT",
+          {
+            "min": 0,
+            "max": 10,
+            "step": 1,
+            "default": 4,
+            "tooltip": "Dilates the detected mask."
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "text",
+        "blur",
+        "threshold",
+        "dilation_factor"
+      ]
+    },
+    "output": [
+      "BBOX_DETECTOR"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "BBOX_DETECTOR"
+    ],
+    "name": "CLIPSegDetectorProvider",
+    "display_name": "CLIPSegDetectorProvider",
+    "description": "Provides a detection function using CLIPSeg, which generates masks based on text prompts.\nTo use this node, the CLIPSeg custom node must be installed.",
+    "python_module": "custom_nodes.ComfyUI-Impact-Pack",
+    "category": "ImpactPack/Util",
+    "output_node": false
+  },
+  "CLIPTextEncodeWithWeight //Inspire": {
+    "input": {
+      "required": {
+        "text": [
+          "STRING",
+          {
+            "multiline": true
+          }
+        ],
+        "clip": [
+          "CLIP"
+        ],
+        "strength": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.01
+          }
+        ],
+        "add_weight": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": -10.0,
+            "max": 10.0,
+            "step": 0.01
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "text",
+        "clip",
+        "strength",
+        "add_weight"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "name": "CLIPTextEncodeWithWeight //Inspire",
+    "display_name": "CLIPTextEncodeWithWeight (Inspire)",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI-Inspire-Pack",
+    "category": "InspirePack/Util",
+    "output_node": false
+  },
+  "DownloadAndLoadCLIPSeg": {
+    "input": {
+      "required": {
+        "model": [
+          [
+            "Kijai/clipseg-rd64-refined-fp16",
+            "CIDAS/clipseg-rd64-refined"
+          ]
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model"
+      ]
+    },
+    "output": [
+      "CLIPSEGMODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "clipseg_model"
+    ],
+    "name": "DownloadAndLoadCLIPSeg",
+    "display_name": "(Down)load CLIPSeg",
+    "description": "\nDownloads and loads CLIPSeg model with huggingface_hub,  \nto ComfyUI/models/clip_seg\n",
+    "python_module": "custom_nodes.ComfyUI-KJNodes",
+    "category": "KJNodes/masking",
+    "output_node": false
+  },
+  "BatchCLIPSeg": {
+    "input": {
+      "required": {
+        "images": [
+          "IMAGE"
+        ],
+        "text": [
+          "STRING",
+          {
+            "multiline": false
+          }
+        ],
+        "threshold": [
+          "FLOAT",
+          {
+            "default": 0.5,
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.001
+          }
+        ],
+        "binary_mask": [
+          "BOOLEAN",
+          {
+            "default": true
+          }
+        ],
+        "combine_mask": [
+          "BOOLEAN",
+          {
+            "default": false
+          }
+        ],
+        "use_cuda": [
+          "BOOLEAN",
+          {
+            "default": true
+          }
+        ]
+      },
+      "optional": {
+        "blur_sigma": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 100.0,
+            "step": 0.1
+          }
+        ],
+        "opt_model": [
+          "CLIPSEGMODEL"
+        ],
+        "prev_mask": [
+          "MASK",
+          {
+            "default": null
+          }
+        ],
+        "image_bg_level": [
+          "FLOAT",
+          {
+            "default": 0.5,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.01
+          }
+        ],
+        "invert": [
+          "BOOLEAN",
+          {
+            "default": false
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "images",
+        "text",
+        "threshold",
+        "binary_mask",
+        "combine_mask",
+        "use_cuda"
+      ],
+      "optional": [
+        "blur_sigma",
+        "opt_model",
+        "prev_mask",
+        "image_bg_level",
+        "invert"
+      ]
+    },
+    "output": [
+      "MASK",
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "Mask",
+      "Image"
+    ],
+    "name": "BatchCLIPSeg",
+    "display_name": "Batch CLIPSeg",
+    "description": "\nSegments an image or batch of images using CLIPSeg.\n",
+    "python_module": "custom_nodes.ComfyUI-KJNodes",
+    "category": "KJNodes/masking",
+    "output_node": false
+  },
+  "CLIP Multi-Switch [RvTools]": {
+    "input": {
+      "required": {},
+      "optional": {
+        "input1": [
+          "CLIP",
+          {
+            "forceInput": true
+          }
+        ],
+        "input2": [
+          "CLIP",
+          {
+            "forceInput": true
+          }
+        ],
+        "input3": [
+          "CLIP",
+          {
+            "forceInput": true
+          }
+        ],
+        "input4": [
+          "CLIP",
+          {
+            "forceInput": true
+          }
+        ],
+        "input5": [
+          "CLIP",
+          {
+            "forceInput": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [],
+      "optional": [
+        "input1",
+        "input2",
+        "input3",
+        "input4",
+        "input5"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "clip"
+    ],
+    "name": "CLIP Multi-Switch [RvTools]",
+    "display_name": "CLIP Multi-Switch",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-rvtools_v2",
+    "category": "\ud83e\udee6 RvTools II/ Multi-Switches",
+    "output_node": false
+  },
+  "Pass Clip [RvTools]": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "Pass Clip [RvTools]",
+    "display_name": "Pass Clip",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-rvtools_v2",
+    "category": "\ud83e\udee6 RvTools II/ Passer",
+    "output_node": false
+  },
+  "Clip Switch [RvTools]": {
+    "input": {
+      "required": {
+        "Input": [
+          "INT",
+          {
+            "default": 1,
+            "min": 1,
+            "max": 2
+          }
+        ]
+      },
+      "optional": {
+        "input1": [
+          "CLIP",
+          {
+            "forceInput": true
+          }
+        ],
+        "input2": [
+          "CLIP",
+          {
+            "forceInput": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "Input"
+      ],
+      "optional": [
+        "input1",
+        "input2"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "Clip Switch [RvTools]",
+    "display_name": "Clip Switch",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-rvtools_v2",
+    "category": "\ud83e\udee6 RvTools II/ Switches",
+    "output_node": false
+  },
+  "Combine Video Clips v2 [RvTools]": {
+    "input": {
+      "required": {
+        "frame_load_cap": [
+          "INT",
+          {
+            "default": 81,
+            "min": 1,
+            "max": 10000,
+            "step": 1,
+            "display": "number",
+            "tooltip": "Total number of frames to load from each video"
+          }
+        ],
+        "simple_combine": [
+          "BOOLEAN",
+          {
+            "default": false,
+            "tooltip": "When True it combines the video files only (without join files)"
+          }
+        ]
+      },
+      "optional": {
+        "video_filelist": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": false,
+            "display": "text"
+          }
+        ],
+        "joined_filelist": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": false,
+            "display": "text"
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "frame_load_cap",
+        "simple_combine"
+      ],
+      "optional": [
+        "video_filelist",
+        "joined_filelist"
+      ]
+    },
+    "output": [
+      "IMAGE",
+      "FLOAT"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "image",
+      "fps"
+    ],
+    "name": "Combine Video Clips v2 [RvTools]",
+    "display_name": "Combine Video Clips v2",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-rvtools_v2",
+    "category": "\ud83e\udee6 RvTools II/ Video",
+    "output_node": false
+  },
+  "Seamless Join Video Clips v2 [RvTools]": {
+    "input": {
+      "required": {
+        "frame_load_cap": [
+          "INT",
+          {
+            "default": 81,
+            "min": 1,
+            "max": 10000,
+            "step": 1,
+            "display": "number"
+          }
+        ],
+        "mask_first_frames": [
+          "INT",
+          {
+            "default": 10,
+            "min": 0,
+            "max": 1000,
+            "step": 1,
+            "display": "number"
+          }
+        ],
+        "mask_last_frames": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 1000,
+            "step": 1,
+            "display": "number"
+          }
+        ]
+      },
+      "optional": {
+        "video_filelist": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": false,
+            "display": "text"
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "frame_load_cap",
+        "mask_first_frames",
+        "mask_last_frames"
+      ],
+      "optional": [
+        "video_filelist"
+      ]
+    },
+    "output": [
+      "IMAGE",
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "image",
+      "mask"
+    ],
+    "name": "Seamless Join Video Clips v2 [RvTools]",
+    "display_name": "Seamless Join Video Clips v2",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-rvtools_v2",
+    "category": "\ud83e\udee6 RvTools II/ Video",
+    "output_node": false
+  },
+  "JWImageLoadRGBFromClipboard": {
+    "input": {
+      "required": {}
+    },
+    "input_order": {
+      "required": []
+    },
+    "output": [
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "IMAGE"
+    ],
+    "name": "JWImageLoadRGBFromClipboard",
+    "display_name": "Image Load RGB From Clipboard",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-various",
+    "category": "jamesWalker55",
+    "output_node": false
+  },
+  "JWImageLoadRGBA From Clipboard": {
+    "input": {
+      "required": {}
+    },
+    "input_order": {
+      "required": []
+    },
+    "output": [
+      "IMAGE",
+      "MASK"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "IMAGE",
+      "MASK"
+    ],
+    "name": "JWImageLoadRGBA From Clipboard",
+    "display_name": "Image Load RGBA From Clipboard",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-various",
+    "category": "jamesWalker55",
+    "output_node": false
+  },
+  "VRGDG_TrimFinalClip": {
+    "input": {
+      "required": {
+        "trigger": [
+          "VHS_FILENAMES",
+          {}
+        ],
+        "output_folder": [
+          "STRING",
+          {}
+        ],
+        "base_name": [
+          "STRING",
+          {
+            "default": "video"
+          }
+        ],
+        "frames_per_scene": [
+          "INT",
+          {}
+        ],
+        "audio_total_duration": [
+          "FLOAT",
+          {}
+        ],
+        "index": [
+          "INT",
+          {}
+        ],
+        "total_sets": [
+          "INT",
+          {}
+        ],
+        "fps": [
+          "INT",
+          {
+            "default": 24
+          }
+        ],
+        "overwrite": [
+          "BOOLEAN",
+          {
+            "default": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "trigger",
+        "output_folder",
+        "base_name",
+        "frames_per_scene",
+        "audio_total_duration",
+        "index",
+        "total_sets",
+        "fps",
+        "overwrite"
+      ]
+    },
+    "output": [
+      "STRING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "final_clip_path"
+    ],
+    "name": "VRGDG_TrimFinalClip",
+    "display_name": "VRGDG_TrimFinalClip",
+    "description": "",
+    "python_module": "custom_nodes.comfyui-vrgamedevgirl",
+    "category": "VRGDG",
+    "output_node": false
+  },
+  "WanVideoClipVisionEncode": {
+    "input": {
+      "required": {
+        "clip_vision": [
+          "CLIP_VISION"
+        ],
+        "image_1": [
+          "IMAGE",
+          {
+            "tooltip": "Image to encode"
+          }
+        ],
+        "strength_1": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.001,
+            "tooltip": "Additional clip embed multiplier"
+          }
+        ],
+        "strength_2": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.001,
+            "tooltip": "Additional clip embed multiplier"
+          }
+        ],
+        "crop": [
+          [
+            "center",
+            "disabled"
+          ],
+          {
+            "default": "center",
+            "tooltip": "Crop image to 224x224 before encoding"
+          }
+        ],
+        "combine_embeds": [
+          [
+            "average",
+            "sum",
+            "concat",
+            "batch"
+          ],
+          {
+            "default": "average",
+            "tooltip": "Method to combine multiple clip embeds"
+          }
+        ],
+        "force_offload": [
+          "BOOLEAN",
+          {
+            "default": true
+          }
+        ]
+      },
+      "optional": {
+        "image_2": [
+          "IMAGE"
+        ],
+        "negative_image": [
+          "IMAGE",
+          {
+            "tooltip": "image to use for uncond"
+          }
+        ],
+        "tiles": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 16,
+            "step": 2,
+            "tooltip": "Use matteo's tiled image encoding for improved accuracy"
+          }
+        ],
+        "ratio": [
+          "FLOAT",
+          {
+            "default": 0.5,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.01,
+            "tooltip": "Ratio of the tile average"
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_vision",
+        "image_1",
+        "strength_1",
+        "strength_2",
+        "crop",
+        "combine_embeds",
+        "force_offload"
+      ],
+      "optional": [
+        "image_2",
+        "negative_image",
+        "tiles",
+        "ratio"
+      ]
+    },
+    "output": [
+      "WANVIDIMAGE_CLIPEMBEDS"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "image_embeds"
+    ],
+    "name": "WanVideoClipVisionEncode",
+    "display_name": "WanVideo ClipVision Encode",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI-WanVideoWrapper",
+    "category": "WanVideoWrapper",
+    "output_node": false
+  },
+  "LoadWanVideoClipTextEncoder": {
+    "input": {
+      "required": {
+        "model_name": [
+          [
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ],
+          {
+            "tooltip": "These models are loaded from 'ComfyUI/models/clip_vision'"
+          }
+        ],
+        "precision": [
+          [
+            "fp16",
+            "fp32",
+            "bf16"
+          ],
+          {
+            "default": "fp16"
+          }
+        ]
+      },
+      "optional": {
+        "load_device": [
+          [
+            "main_device",
+            "offload_device"
+          ],
+          {
+            "default": "offload_device"
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model_name",
+        "precision"
+      ],
+      "optional": [
+        "load_device"
+      ]
+    },
+    "output": [
+      "CLIP_VISION"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "wan_clip_vision"
+    ],
+    "name": "LoadWanVideoClipTextEncoder",
+    "display_name": "WanVideo CLIP Text Encoder Loader",
+    "description": "Loads Wan clip_vision model from 'ComfyUI/models/clip_vision'",
+    "python_module": "custom_nodes.ComfyUI-WanVideoWrapper",
+    "category": "WanVideoWrapper",
+    "output_node": false
+  },
+  "WanVideoImageClipEncode": {
+    "input": {
+      "required": {
+        "clip_vision": [
+          "CLIP_VISION"
+        ],
+        "image": [
+          "IMAGE",
+          {
+            "tooltip": "Image to encode"
+          }
+        ],
+        "vae": [
+          "WANVAE"
+        ],
+        "generation_width": [
+          "INT",
+          {
+            "default": 832,
+            "min": 64,
+            "max": 8096,
+            "step": 8,
+            "tooltip": "Width of the image to encode"
+          }
+        ],
+        "generation_height": [
+          "INT",
+          {
+            "default": 480,
+            "min": 64,
+            "max": 8096,
+            "step": 8,
+            "tooltip": "Height of the image to encode"
+          }
+        ],
+        "num_frames": [
+          "INT",
+          {
+            "default": 81,
+            "min": 1,
+            "max": 10000,
+            "step": 4,
+            "tooltip": "Number of frames to encode"
+          }
+        ]
+      },
+      "optional": {
+        "force_offload": [
+          "BOOLEAN",
+          {
+            "default": true
+          }
+        ],
+        "noise_aug_strength": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.001,
+            "tooltip": "Strength of noise augmentation, helpful for I2V where some noise can add motion and give sharper results"
+          }
+        ],
+        "latent_strength": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.001,
+            "tooltip": "Additional latent multiplier, helpful for I2V where lower values allow for more motion"
+          }
+        ],
+        "clip_embed_strength": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 10.0,
+            "step": 0.001,
+            "tooltip": "Additional clip embed multiplier"
+          }
+        ],
+        "adjust_resolution": [
+          "BOOLEAN",
+          {
+            "default": true,
+            "tooltip": "Performs the same resolution adjustment as in the original code"
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_vision",
+        "image",
+        "vae",
+        "generation_width",
+        "generation_height",
+        "num_frames"
+      ],
+      "optional": [
+        "force_offload",
+        "noise_aug_strength",
+        "latent_strength",
+        "clip_embed_strength",
+        "adjust_resolution"
+      ]
+    },
+    "output": [
+      "WANVIDIMAGE_EMBEDS"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "image_embeds"
+    ],
+    "name": "WanVideoImageClipEncode",
+    "display_name": "WanVideo ImageClip Encode (Deprecated)",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI-WanVideoWrapper",
+    "category": "WanVideoWrapper",
+    "output_node": false,
+    "deprecated": true
+  },
+  "CR Clip Input Switch": {
+    "input": {
+      "required": {
+        "Input": [
+          "INT",
+          {
+            "default": 1,
+            "min": 1,
+            "max": 2
+          }
+        ]
+      },
+      "optional": {
+        "clip1": [
+          "CLIP"
+        ],
+        "clip2": [
+          "CLIP"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "Input"
+      ],
+      "optional": [
+        "clip1",
+        "clip2"
+      ]
+    },
+    "output": [
+      "CLIP",
+      "STRING"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "CLIP",
+      "show_help"
+    ],
+    "name": "CR Clip Input Switch",
+    "display_name": "\ud83d\udd00 CR Clip Input Switch",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI_Comfyroll_CustomNodes",
+    "category": "\ud83e\udde9 Comfyroll Studio/\ud83d\udee0\ufe0f Utils/\ud83d\udd00 Logic",
+    "output_node": false
+  },
+  "CR Switch Model and CLIP": {
+    "input": {
+      "required": {
+        "Input": [
+          "INT",
+          {
+            "default": 1,
+            "min": 1,
+            "max": 2
+          }
+        ],
+        "model1": [
+          "MODEL"
+        ],
+        "clip1": [
+          "CLIP"
+        ],
+        "model2": [
+          "MODEL"
+        ],
+        "clip2": [
+          "CLIP"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "Input",
+        "model1",
+        "clip1",
+        "model2",
+        "clip2"
+      ]
+    },
+    "output": [
+      "MODEL",
+      "CLIP",
+      "STRING"
+    ],
+    "output_is_list": [
+      false,
+      false,
+      false
+    ],
+    "output_name": [
+      "MODEL",
+      "CLIP",
+      "show_help"
+    ],
+    "name": "CR Switch Model and CLIP",
+    "display_name": "\ud83d\udd00 CR Switch Model and CLIP",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI_Comfyroll_CustomNodes",
+    "category": "\ud83e\udde9 Comfyroll Studio/\ud83d\udee0\ufe0f Utils/\ud83d\udd00 Logic",
+    "output_node": false
+  },
+  "CLIPTextEncodeSDXL+": {
+    "input": {
+      "required": {
+        "width": [
+          "INT",
+          {
+            "default": 1024.0,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "height": [
+          "INT",
+          {
+            "default": 1024.0,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "size_cond_factor": [
+          "INT",
+          {
+            "default": 4,
+            "min": 1,
+            "max": 16
+          }
+        ],
+        "text": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true,
+            "default": ""
+          }
+        ],
+        "clip": [
+          "CLIP"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "width",
+        "height",
+        "size_cond_factor",
+        "text",
+        "clip"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "name": "CLIPTextEncodeSDXL+",
+    "display_name": "\ud83d\udd27 SDXL CLIPTextEncode",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI_essentials",
+    "category": "essentials/conditioning",
+    "output_node": false
+  },
+  "ApplyCLIPSeg+": {
+    "input": {
+      "required": {
+        "clip_seg": [
+          "CLIP_SEG"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "prompt": [
+          "STRING",
+          {
+            "multiline": false,
+            "default": ""
+          }
+        ],
+        "threshold": [
+          "FLOAT",
+          {
+            "default": 0.4,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.05
+          }
+        ],
+        "smooth": [
+          "INT",
+          {
+            "default": 9,
+            "min": 0,
+            "max": 32,
+            "step": 1
+          }
+        ],
+        "dilate": [
+          "INT",
+          {
+            "default": 0,
+            "min": -32,
+            "max": 32,
+            "step": 1
+          }
+        ],
+        "blur": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 64,
+            "step": 1
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_seg",
+        "image",
+        "prompt",
+        "threshold",
+        "smooth",
+        "dilate",
+        "blur"
+      ]
+    },
+    "output": [
+      "MASK"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "MASK"
+    ],
+    "name": "ApplyCLIPSeg+",
+    "display_name": "\ud83d\udd27 Apply CLIPSeg",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI_essentials",
+    "category": "essentials/segmentation",
+    "output_node": false
+  },
+  "LoadCLIPSegModels+": {
+    "input": {
+      "required": {}
+    },
+    "input_order": {
+      "required": []
+    },
+    "output": [
+      "CLIP_SEG"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP_SEG"
+    ],
+    "name": "LoadCLIPSegModels+",
+    "display_name": "\ud83d\udd27 Load CLIPSeg Models",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI_essentials",
+    "category": "essentials/segmentation",
+    "output_node": false
+  },
+  "IPAdapterClipVisionEnhancer": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 5,
+            "step": 0.05
+          }
+        ],
+        "weight_type": [
+          [
+            "linear",
+            "ease in",
+            "ease out",
+            "ease in-out",
+            "reverse in-out",
+            "weak input",
+            "weak output",
+            "weak middle",
+            "strong middle",
+            "style transfer",
+            "composition",
+            "strong style transfer",
+            "style and composition",
+            "style transfer precise",
+            "composition precise"
+          ]
+        ],
+        "combine_embeds": [
+          [
+            "concat",
+            "add",
+            "subtract",
+            "average",
+            "norm average"
+          ]
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "embeds_scaling": [
+          [
+            "V only",
+            "K+V",
+            "K+V w/ C penalty",
+            "K+mean(V) w/ C penalty"
+          ]
+        ],
+        "enhance_tiles": [
+          "INT",
+          {
+            "default": 2,
+            "min": 1,
+            "max": 16
+          }
+        ],
+        "enhance_ratio": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.05
+          }
+        ]
+      },
+      "optional": {
+        "image_negative": [
+          "IMAGE"
+        ],
+        "attn_mask": [
+          "MASK"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "image",
+        "weight",
+        "weight_type",
+        "combine_embeds",
+        "start_at",
+        "end_at",
+        "embeds_scaling",
+        "enhance_tiles",
+        "enhance_ratio"
+      ],
+      "optional": [
+        "image_negative",
+        "attn_mask",
+        "clip_vision"
+      ]
+    },
+    "output": [
+      "MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "MODEL"
+    ],
+    "name": "IPAdapterClipVisionEnhancer",
+    "display_name": "IPAdapter ClipVision Enhancer",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI_IPAdapter_plus",
+    "category": "ipadapter/dev",
+    "output_node": false
+  },
+  "IPAdapterClipVisionEnhancerBatch": {
+    "input": {
+      "required": {
+        "model": [
+          "MODEL"
+        ],
+        "ipadapter": [
+          "IPADAPTER"
+        ],
+        "image": [
+          "IMAGE"
+        ],
+        "weight": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": -1,
+            "max": 5,
+            "step": 0.05
+          }
+        ],
+        "weight_type": [
+          [
+            "linear",
+            "ease in",
+            "ease out",
+            "ease in-out",
+            "reverse in-out",
+            "weak input",
+            "weak output",
+            "weak middle",
+            "strong middle",
+            "style transfer",
+            "composition",
+            "strong style transfer",
+            "style and composition",
+            "style transfer precise",
+            "composition precise"
+          ]
+        ],
+        "start_at": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "end_at": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.001
+          }
+        ],
+        "embeds_scaling": [
+          [
+            "V only",
+            "K+V",
+            "K+V w/ C penalty",
+            "K+mean(V) w/ C penalty"
+          ]
+        ],
+        "enhance_tiles": [
+          "INT",
+          {
+            "default": 2,
+            "min": 1,
+            "max": 16
+          }
+        ],
+        "enhance_ratio": [
+          "FLOAT",
+          {
+            "default": 0.5,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.05
+          }
+        ],
+        "encode_batch_size": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 4096
+          }
+        ]
+      },
+      "optional": {
+        "image_negative": [
+          "IMAGE"
+        ],
+        "attn_mask": [
+          "MASK"
+        ],
+        "clip_vision": [
+          "CLIP_VISION"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model",
+        "ipadapter",
+        "image",
+        "weight",
+        "weight_type",
+        "start_at",
+        "end_at",
+        "embeds_scaling",
+        "enhance_tiles",
+        "enhance_ratio",
+        "encode_batch_size"
+      ],
+      "optional": [
+        "image_negative",
+        "attn_mask",
+        "clip_vision"
+      ]
+    },
+    "output": [
+      "MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "MODEL"
+    ],
+    "name": "IPAdapterClipVisionEnhancerBatch",
+    "display_name": "IPAdapter ClipVision Enhancer Batch",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI_IPAdapter_plus",
+    "category": "ipadapter/dev",
+    "output_node": false
+  },
+  "PrepImageForClipVision": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ],
+        "interpolation": [
+          [
+            "LANCZOS",
+            "BICUBIC",
+            "HAMMING",
+            "BILINEAR",
+            "BOX",
+            "NEAREST"
+          ]
+        ],
+        "crop_position": [
+          [
+            "top",
+            "bottom",
+            "left",
+            "right",
+            "center",
+            "pad"
+          ]
+        ],
+        "sharpening": [
+          "FLOAT",
+          {
+            "default": 0.0,
+            "min": 0,
+            "max": 1,
+            "step": 0.05
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "interpolation",
+        "crop_position",
+        "sharpening"
+      ]
+    },
+    "output": [
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "IMAGE"
+    ],
+    "name": "PrepImageForClipVision",
+    "display_name": "Prep Image For ClipVision",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI_IPAdapter_plus",
+    "category": "ipadapter/utils",
+    "output_node": false
+  },
+  "CLIPTextEncode SDXL Plus (JPS)": {
+    "input": {
+      "required": {
+        "width": [
+          "INT",
+          {
+            "default": 1024.0,
+            "min": 0,
+            "max": 12288
+          }
+        ],
+        "height": [
+          "INT",
+          {
+            "default": 1024.0,
+            "min": 0,
+            "max": 12288
+          }
+        ],
+        "res_factor": [
+          "INT",
+          {
+            "default": 4,
+            "min": 1,
+            "max": 8
+          }
+        ],
+        "text_pos": [
+          "STRING",
+          {
+            "multiline": true,
+            "default": "",
+            "dynamicPrompts": true
+          }
+        ],
+        "text_neg": [
+          "STRING",
+          {
+            "multiline": true,
+            "default": "",
+            "dynamicPrompts": true
+          }
+        ],
+        "clip": [
+          "CLIP"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "width",
+        "height",
+        "res_factor",
+        "text_pos",
+        "text_neg",
+        "clip"
+      ]
+    },
+    "output": [
+      "CONDITIONING",
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "cond_pos",
+      "cond_neg"
+    ],
+    "name": "CLIPTextEncode SDXL Plus (JPS)",
+    "display_name": "CLIPTextEncode SDXL Plus (JPS)",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI_JPS-Nodes",
+    "category": "JPS Nodes/Conditioning",
+    "output_node": false
+  },
+  "smZ CLIPTextEncode": {
+    "input": {
+      "required": {
+        "text": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "clip": [
+          "CLIP"
+        ],
+        "parser": [
+          [
+            "comfy",
+            "comfy++",
+            "A1111",
+            "full",
+            "compel",
+            "fixed attention"
+          ],
+          {
+            "default": "comfy"
+          }
+        ],
+        "mean_normalization": [
+          "BOOLEAN",
+          {
+            "default": true,
+            "tooltip": "Toggles whether weights are normalized by taking the mean"
+          }
+        ],
+        "multi_conditioning": [
+          "BOOLEAN",
+          {
+            "default": true
+          }
+        ],
+        "use_old_emphasis_implementation": [
+          "BOOLEAN",
+          {
+            "default": false
+          }
+        ],
+        "with_SDXL": [
+          "BOOLEAN",
+          {
+            "default": false
+          }
+        ],
+        "ascore": [
+          "FLOAT",
+          {
+            "default": 6.0,
+            "min": 0.0,
+            "max": 1000.0,
+            "step": 0.01
+          }
+        ],
+        "width": [
+          "INT",
+          {
+            "default": 1024.0,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "height": [
+          "INT",
+          {
+            "default": 1024.0,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "crop_w": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "crop_h": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "target_width": [
+          "INT",
+          {
+            "default": 1024.0,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "target_height": [
+          "INT",
+          {
+            "default": 1024.0,
+            "min": 0,
+            "max": 16384
+          }
+        ],
+        "text_g": [
+          "STRING",
+          {
+            "multiline": true,
+            "placeholder": "CLIP_G",
+            "dynamicPrompts": true
+          }
+        ],
+        "text_l": [
+          "STRING",
+          {
+            "multiline": true,
+            "placeholder": "CLIP_L",
+            "dynamicPrompts": true
+          }
+        ]
+      },
+      "optional": {
+        "smZ_steps": [
+          "INT",
+          {
+            "default": 1,
+            "min": 1,
+            "max": 18446744073709551615
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "text",
+        "clip",
+        "parser",
+        "mean_normalization",
+        "multi_conditioning",
+        "use_old_emphasis_implementation",
+        "with_SDXL",
+        "ascore",
+        "width",
+        "height",
+        "crop_w",
+        "crop_h",
+        "target_width",
+        "target_height",
+        "text_g",
+        "text_l"
+      ],
+      "optional": [
+        "smZ_steps"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "name": "smZ CLIPTextEncode",
+    "display_name": "CLIP Text Encode++",
+    "description": "",
+    "python_module": "custom_nodes.ComfyUI_smZNodes",
+    "category": "conditioning",
+    "output_node": false
+  },
+  "Interpolate Clip Sequential (mtb)": {
+    "input": {
+      "required": {
+        "base_text": [
+          "STRING",
+          {
+            "multiline": true
+          }
+        ],
+        "text_to_replace": [
+          "STRING",
+          {
+            "default": ""
+          }
+        ],
+        "clip": [
+          "CLIP"
+        ],
+        "interpolation_strength": [
+          "FLOAT",
+          {
+            "default": 1.0,
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.01
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "base_text",
+        "text_to_replace",
+        "clip",
+        "interpolation_strength"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "name": "Interpolate Clip Sequential (mtb)",
+    "display_name": "Interpolate Clip Sequential (mtb)",
+    "description": "",
+    "python_module": "custom_nodes.comfy_mtb",
+    "category": "mtb/conditioning",
+    "output_node": false
+  },
+  "CLIPTextEncodeFluxMerged": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP"
+        ],
+        "prompt": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true,
+            "tooltip": "Text prompt for both CLIP-L and T5XXL encoders"
+          }
+        ],
+        "guidance": [
+          "FLOAT",
+          {
+            "default": 3.5,
+            "min": 0.0,
+            "max": 100.0,
+            "step": 0.1
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "prompt",
+        "guidance"
+      ]
+    },
+    "output": [
+      "CONDITIONING"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CONDITIONING"
+    ],
+    "name": "CLIPTextEncodeFluxMerged",
+    "display_name": "CLIP Text Encode FLUX Merged (CRT)",
+    "description": "",
+    "python_module": "custom_nodes.crt-nodes",
+    "category": "CRT/Conditioning",
+    "output_node": false
+  },
+  "XY Input: Clip Skip": {
+    "input": {
+      "required": {
+        "target_ckpt": [
+          [
+            "Base",
+            "Refiner"
+          ]
+        ],
+        "batch_count": [
+          "INT",
+          {
+            "default": 3,
+            "min": 0,
+            "max": 50
+          }
+        ],
+        "first_clip_skip": [
+          "INT",
+          {
+            "default": -1,
+            "min": -24,
+            "max": -1,
+            "step": 1
+          }
+        ],
+        "last_clip_skip": [
+          "INT",
+          {
+            "default": -3,
+            "min": -24,
+            "max": -1,
+            "step": 1
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "target_ckpt",
+        "batch_count",
+        "first_clip_skip",
+        "last_clip_skip"
+      ]
+    },
+    "output": [
+      "XY"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "X or Y"
+    ],
+    "name": "XY Input: Clip Skip",
+    "display_name": "XY Input: Clip Skip",
+    "description": "",
+    "python_module": "custom_nodes.efficiency-nodes-comfyui",
+    "category": "Efficiency Nodes/XY Inputs",
+    "output_node": false
+  },
+  "ClipLoaderGGUF": {
+    "input": {
+      "required": {
+        "clip_name": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "type": [
+          [
+            "stable_diffusion",
+            "stable_cascade",
+            "sd3",
+            "stable_audio",
+            "mochi",
+            "ltxv",
+            "pixart",
+            "cosmos",
+            "lumina2",
+            "wan",
+            "hidream",
+            "chroma",
+            "ace",
+            "omnigen2",
+            "qwen_image",
+            "hunyuan_image",
+            "flux2",
+            "ovis"
+          ]
+        ]
+      },
+      "optional": {
+        "device": [
+          [
+            "default",
+            "cpu"
+          ],
+          {
+            "advanced": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_name",
+        "type"
+      ],
+      "optional": [
+        "device"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "ClipLoaderGGUF",
+    "display_name": "GGUF CLIP Loader",
+    "description": "",
+    "python_module": "custom_nodes.gguf",
+    "category": "gguf",
+    "output_node": false
+  },
+  "DualClipLoaderGGUF": {
+    "input": {
+      "required": {
+        "clip_name1": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "clip_name2": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "type": [
+          [
+            "sdxl",
+            "sd3",
+            "flux",
+            "hunyuan_video",
+            "hidream",
+            "hunyuan_image",
+            "hunyuan_video_15",
+            "kandinsky5",
+            "kandinsky5_image",
+            "ltxv",
+            "newbie"
+          ]
+        ]
+      },
+      "optional": {
+        "device": [
+          [
+            "default",
+            "cpu"
+          ],
+          {
+            "advanced": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_name1",
+        "clip_name2",
+        "type"
+      ],
+      "optional": [
+        "device"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "DualClipLoaderGGUF",
+    "display_name": "GGUF DualCLIP Loader",
+    "description": "",
+    "python_module": "custom_nodes.gguf",
+    "category": "gguf",
+    "output_node": false
+  },
+  "TripleClipLoaderGGUF": {
+    "input": {
+      "required": {
+        "clip_name1": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "clip_name2": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "clip_name3": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_name1",
+        "clip_name2",
+        "clip_name3"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "TripleClipLoaderGGUF",
+    "display_name": "GGUF TripleCLIP Loader",
+    "description": "",
+    "python_module": "custom_nodes.gguf",
+    "category": "gguf",
+    "output_node": false
+  },
+  "QuadrupleClipLoaderGGUF": {
+    "input": {
+      "required": {
+        "clip_name1": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "clip_name2": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "clip_name3": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ],
+        "clip_name4": [
+          [
+            "qwen3-4b-heretic-merged-f16.gguf",
+            "qwen_3_4b.safetensors",
+            "qwen_3_8b_fp8mixed.safetensors"
+          ]
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_name1",
+        "clip_name2",
+        "clip_name3",
+        "clip_name4"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "QuadrupleClipLoaderGGUF",
+    "display_name": "GGUF QuadrupleCLIP Loader",
+    "description": "",
+    "python_module": "custom_nodes.gguf",
+    "category": "gguf",
+    "output_node": false
+  },
+  "CLIPTextEncodeFluxUnguided": {
+    "input": {
+      "required": {
+        "clip": [
+          "CLIP"
+        ],
+        "clip_l": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ],
+        "t5xxl": [
+          "STRING",
+          {
+            "multiline": true,
+            "dynamicPrompts": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip",
+        "clip_l",
+        "t5xxl"
+      ]
+    },
+    "output": [
+      "CONDITIONING",
+      "INT",
+      "INT"
+    ],
+    "output_is_list": [
+      false,
+      false,
+      false
+    ],
+    "output_name": [
+      "conditioning",
+      "clip_l_end",
+      "t5xxl_end"
+    ],
+    "name": "CLIPTextEncodeFluxUnguided",
+    "display_name": "CLIPTextEncodeFluxUnguided",
+    "description": "",
+    "python_module": "custom_nodes.RES4LYF",
+    "category": "RES4LYF/conditioning",
+    "output_node": false,
+    "experimental": true
+  },
+  "CLIPTextEncode (NSP)": {
+    "input": {
+      "required": {
+        "mode": [
+          [
+            "Noodle Soup Prompts",
+            "Wildcards"
+          ]
+        ],
+        "noodle_key": [
+          "STRING",
+          {
+            "default": "__",
+            "multiline": false
+          }
+        ],
+        "seed": [
+          "INT",
+          {
+            "default": 0,
+            "min": 0,
+            "max": 18446744073709551615
+          }
+        ],
+        "text": [
+          "STRING",
+          {
+            "multiline": true
+          }
+        ],
+        "clip": [
+          "CLIP"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "mode",
+        "noodle_key",
+        "seed",
+        "text",
+        "clip"
+      ]
+    },
+    "output": [
+      "CONDITIONING",
+      "STRING",
+      "STRING"
+    ],
+    "output_is_list": [
+      false,
+      false,
+      false
+    ],
+    "output_name": [
+      "conditioning",
+      "parsed_text",
+      "raw_text"
+    ],
+    "name": "CLIPTextEncode (NSP)",
+    "display_name": "CLIPTextEncode (NSP)",
+    "description": "",
+    "python_module": "custom_nodes.was-node-suite-comfyui",
+    "category": "WAS Suite/Conditioning",
+    "output_node": true
+  },
+  "CLIP Input Switch": {
+    "input": {
+      "required": {
+        "clip_a": [
+          "CLIP"
+        ],
+        "clip_b": [
+          "CLIP"
+        ],
+        "boolean": [
+          "BOOLEAN",
+          {
+            "forceInput": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_a",
+        "clip_b",
+        "boolean"
+      ]
+    },
+    "output": [
+      "CLIP"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP"
+    ],
+    "name": "CLIP Input Switch",
+    "display_name": "CLIP Input Switch",
+    "description": "",
+    "python_module": "custom_nodes.was-node-suite-comfyui",
+    "category": "WAS Suite/Logic",
+    "output_node": false
+  },
+  "CLIP Vision Input Switch": {
+    "input": {
+      "required": {
+        "clip_vision_a": [
+          "CLIP_VISION"
+        ],
+        "clip_vision_b": [
+          "CLIP_VISION"
+        ],
+        "boolean": [
+          "BOOLEAN",
+          {
+            "forceInput": true
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "clip_vision_a",
+        "clip_vision_b",
+        "boolean"
+      ]
+    },
+    "output": [
+      "CLIP_VISION"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "CLIP_VISION"
+    ],
+    "name": "CLIP Vision Input Switch",
+    "display_name": "CLIP Vision Input Switch",
+    "description": "",
+    "python_module": "custom_nodes.was-node-suite-comfyui",
+    "category": "WAS Suite/Logic",
+    "output_node": false
+  },
+  "CLIPSeg Masking": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ],
+        "text": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": false
+          }
+        ]
+      },
+      "optional": {
+        "clipseg_model": [
+          "CLIPSEG_MODEL"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "text"
+      ],
+      "optional": [
+        "clipseg_model"
+      ]
+    },
+    "output": [
+      "MASK",
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false,
+      false
+    ],
+    "output_name": [
+      "MASK",
+      "MASK_IMAGE"
+    ],
+    "name": "CLIPSeg Masking",
+    "display_name": "CLIPSeg Masking",
+    "description": "",
+    "python_module": "custom_nodes.was-node-suite-comfyui",
+    "category": "WAS Suite/Image/Masking",
+    "output_node": false
+  },
+  "CLIPSeg Model Loader": {
+    "input": {
+      "required": {
+        "model": [
+          "STRING",
+          {
+            "default": "CIDAS/clipseg-rd64-refined",
+            "multiline": false
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "model"
+      ]
+    },
+    "output": [
+      "CLIPSEG_MODEL"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "clipseg_model"
+    ],
+    "name": "CLIPSeg Model Loader",
+    "display_name": "CLIPSeg Model Loader",
+    "description": "",
+    "python_module": "custom_nodes.was-node-suite-comfyui",
+    "category": "WAS Suite/Loaders",
+    "output_node": false
+  },
+  "CLIPSeg Batch Masking": {
+    "input": {
+      "required": {
+        "image_a": [
+          "IMAGE"
+        ],
+        "image_b": [
+          "IMAGE"
+        ],
+        "text_a": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": false
+          }
+        ],
+        "text_b": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": false
+          }
+        ]
+      },
+      "optional": {
+        "image_c": [
+          "IMAGE"
+        ],
+        "image_d": [
+          "IMAGE"
+        ],
+        "image_e": [
+          "IMAGE"
+        ],
+        "image_f": [
+          "IMAGE"
+        ],
+        "text_c": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": false
+          }
+        ],
+        "text_d": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": false
+          }
+        ],
+        "text_e": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": false
+          }
+        ],
+        "text_f": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": false
+          }
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "image_a",
+        "image_b",
+        "text_a",
+        "text_b"
+      ],
+      "optional": [
+        "image_c",
+        "image_d",
+        "image_e",
+        "image_f",
+        "text_c",
+        "text_d",
+        "text_e",
+        "text_f"
+      ]
+    },
+    "output": [
+      "IMAGE",
+      "MASK",
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false,
+      false,
+      false
+    ],
+    "output_name": [
+      "IMAGES_BATCH",
+      "MASKS_BATCH",
+      "MASK_IMAGES_BATCH"
+    ],
+    "name": "CLIPSeg Batch Masking",
+    "display_name": "CLIPSeg Batch Masking",
+    "description": "",
+    "python_module": "custom_nodes.was-node-suite-comfyui",
+    "category": "WAS Suite/Image/Masking",
+    "output_node": false
+  },
+  "unCLIP Checkpoint Loader": {
+    "input": {
+      "required": {
+        "ckpt_name": [
+          [
+            "lustifySDXLNSFW_endgame.safetensors"
+          ]
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "ckpt_name"
+      ]
+    },
+    "output": [
+      "MODEL",
+      "CLIP",
+      "VAE",
+      "CLIP_VISION",
+      "STRING"
+    ],
+    "output_is_list": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "output_name": [
+      "MODEL",
+      "CLIP",
+      "VAE",
+      "CLIP_VISION",
+      "NAME_STRING"
+    ],
+    "name": "unCLIP Checkpoint Loader",
+    "display_name": "unCLIP Checkpoint Loader",
+    "description": "",
+    "python_module": "custom_nodes.was-node-suite-comfyui",
+    "category": "WAS Suite/Loaders",
+    "output_node": false
+  },
+  "CLIPSEG2": {
+    "input": {
+      "required": {
+        "image": [
+          "IMAGE"
+        ],
+        "text": [
+          "STRING",
+          {
+            "default": "",
+            "multiline": false
+          }
+        ],
+        "use_cuda": [
+          "BOOLEAN",
+          {
+            "default": false
+          }
+        ]
+      },
+      "optional": {
+        "clipseg_model": [
+          "CLIPSEG_MODEL"
+        ]
+      }
+    },
+    "input_order": {
+      "required": [
+        "image",
+        "text",
+        "use_cuda"
+      ],
+      "optional": [
+        "clipseg_model"
+      ]
+    },
+    "output": [
+      "IMAGE"
+    ],
+    "output_is_list": [
+      false
+    ],
+    "output_name": [
+      "IMAGE"
+    ],
+    "name": "CLIPSEG2",
+    "display_name": "CLIPSEG2",
+    "description": "",
+    "python_module": "custom_nodes.was-node-suite-comfyui",
+    "category": "image/transformation",
+    "output_node": false
+  }
+}

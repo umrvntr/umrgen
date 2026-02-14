@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nv0.8.3 - Enhanced LoRA Management \\(File Upload & Import Validation\\)\n\n## LoRA Upload UI Redesign\n- Replaced modal popup with inline accordion in left sidebar\n- Local file upload now PRIMARY option \\(prominent blue button\\)\n- URL import moved to SECONDARY position below divider\n- Accordion toggles with + button, auto-closes after success\n- Unified status display with color-coded feedback\n- No more disruptive popups covering workspace\n\n## LoRA Import Validation \\(Security Fix\\)\n- Added Content-Type validation to reject HTML/text responses\n- Binary content inspection checks first 100 bytes for HTML signatures\n- File size validation rejects suspiciously small files \\(<1MB\\)\n- Blocks CivitAI login pages and error pages from being saved as models\n- Enhanced error messages guide users on authentication issues\n- Three-layer defense: HTTP headers → binary content → file size\n\n## Technical Improvements\n- Session-based file handling with getSessionId\\(\\)\n- 500MB strict limit enforced at multiple checkpoints\n- FormData upload with progress feedback\n- Auto-refresh LoRA list after successful upload\n- Proper error handling and cleanup for failed uploads\n\n## User Experience\n- Upload from device: Click \"Choose File\" → Select .safetensors → Auto-upload\n- Import from URL: Paste URL → Optional custom name → Download\n- Real-time validation prevents invalid files\n- Success animations and auto-close behavior\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)",
+      "Bash(node --check:*)",
+      "Bash(npm run server:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm run build:*)",
+      "Bash(timeout 5 npm start)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+.env
+node_modules/
+outputs/
+output*/
+USER_LORA/
+USER_LORA_LEGACY/
+sessions/
+tmp_uploads/
+history.json
+presets.json
+*.bak.*
+* - Copy.*
+.DS_Store
+.next/
+public-dev/
+node_modules/
+public/assets/
+*.legacy.*
+.vscode/
