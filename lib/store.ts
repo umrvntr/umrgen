@@ -73,7 +73,7 @@ const useStore = create<AppState>((set, get) => ({
     glare_angle: 0,
     glare_threshold: 0.95,
     ca_strength: 0,
-    radial_blur_type: 'spin',
+    radial_blur_type: 'none',
     radial_blur_strength: 0,
     lens_distortion: 0,
   },
@@ -108,6 +108,7 @@ const useStore = create<AppState>((set, get) => ({
   // UI State
   isMobile: false,
   sidebarOpen: true,
+  historyCollapsed: true,
   proModalOpen: false,
 
   // System Status
@@ -289,7 +290,7 @@ const useStore = create<AppState>((set, get) => ({
 
   loadFromHistory: (item: HistoryItem) => {
     const sid = getSessionId();
-    
+
     const updates: Partial<AppState> = {
       prompt: item.prompt,
       negativePrompt: item.negative || '',
@@ -525,6 +526,7 @@ const useStore = create<AppState>((set, get) => ({
 
   // Setters - UI State
   setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
+  setHistoryCollapsed: (historyCollapsed) => set({ historyCollapsed }),
   setIsMobile: (isMobile) => set({ isMobile }),
 
   // Generation Action

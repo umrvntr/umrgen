@@ -160,6 +160,7 @@ export interface AppState {
   // UI state
   isMobile: boolean;
   sidebarOpen: boolean;
+  historyCollapsed: boolean;
   proModalOpen: boolean;
 
   // System status
@@ -195,6 +196,7 @@ export interface AppState {
   setProModalOpen: (open: boolean) => void;
 
   setSidebarOpen: (open: boolean) => void;
+  setHistoryCollapsed: (collapsed: boolean) => void;
   setIsMobile: (mobile: boolean) => void;
 
   // System actions

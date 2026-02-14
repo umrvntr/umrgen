@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Menu, X, Upload, Trash2, Zap, Lock, Key, AlertCircle, ChevronLeft, ChevronRight, Sliders, ChevronDown, Plus, Download, Globe, FileUp } from 'lucide-react';
+import { Menu, X, Upload, Trash2, Zap, Lock, Key, AlertCircle, ChevronLeft, ChevronRight, Sliders, ChevronDown, Plus, Download, Globe, FileUp, History } from 'lucide-react';
 import useStore, { getSessionId } from '@/lib/store';
 import { LoraConfig } from '@/types';
 import HistoryDrawer from '@/components/HistoryDrawer';
@@ -46,8 +46,10 @@ export default function HomePage() {
     importLora,
     isMobile,
     sidebarOpen,
+    historyCollapsed,
     setIsMobile,
     setSidebarOpen,
+    setHistoryCollapsed,
   } = useStore();
 
   const [copyToast, setCopyToast] = useState(false);
@@ -274,6 +276,13 @@ export default function HomePage() {
                 <X size={14} />
               </button>
             )}
+            <button
+              className={`btn btn-sm ${!historyCollapsed ? 'active' : ''}`}
+              onClick={() => setHistoryCollapsed(!historyCollapsed)}
+              title="Toggle History"
+            >
+              <History size={14} />
+            </button>
           </div>
         </div>
 
@@ -823,10 +832,10 @@ export default function HomePage() {
                   ? 'rgba(255, 165, 2, 0.08)'
                   : 'rgba(10, 240, 255, 0.04)',
               border: `1px solid ${systemStatus.dailyRemaining <= 10
-                  ? 'rgba(255, 71, 87, 0.3)'
-                  : systemStatus.dailyRemaining <= 30
-                    ? 'rgba(255, 165, 2, 0.25)'
-                    : 'var(--border-dim)'
+                ? 'rgba(255, 71, 87, 0.3)'
+                : systemStatus.dailyRemaining <= 30
+                  ? 'rgba(255, 165, 2, 0.25)'
+                  : 'var(--border-dim)'
                 }`,
               borderRadius: 4,
               fontSize: 9,
