@@ -1142,12 +1142,26 @@ textarea.prompt-input {
     z-index: 90;
   }
 
-  .terminal-overlay {
-    padding: 16px;
+  .history-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 95;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
   }
 
-  .step-preview-zone {
-    max-width: 280px;
+  .history-backdrop.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .history-drawer {
+    width: 100% !important;
+    max-width: 400px;
+    z-index: 1000;
   }
 }
 
@@ -1445,6 +1459,30 @@ textarea.prompt-input {
   border: 1px dashed var(--border-dim);
   border-radius: var(--radius);
   margin-top: 20px;
+}
+
+.history-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.history-close-btn:hover {
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+@media (max-width: 768px) {
+  .history-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .history-drawer-icon {

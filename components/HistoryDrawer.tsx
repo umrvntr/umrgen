@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { ChevronUp, ChevronDown, Zap, Clock, MessageSquare } from 'lucide-react';
+import { ChevronUp, ChevronDown, Zap, Clock, MessageSquare, X } from 'lucide-react';
 import useStore from '@/lib/store';
 import { HistoryItem } from '@/types';
 
@@ -31,7 +31,16 @@ export default function HistoryDrawer({ history, onHistoryClick }: HistoryDrawer
     <div className={`history-drawer ${isCollapsed ? 'collapsed' : ''}`} ref={drawerRef}>
       <div className="history-drawer-content">
         <div className="history-info">
-          <div className="history-title">HISTORY</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div className="history-title">HISTORY</div>
+            <button
+              className="history-close-btn"
+              onClick={() => setIsCollapsed(true)}
+              title="Close History"
+            >
+              <X size={16} />
+            </button>
+          </div>
           <div className="history-count">
             <span style={{ color: 'var(--accent)', fontWeight: 'bold' }}>{history.length}</span> ENGINES SYNTHESIZED
           </div>

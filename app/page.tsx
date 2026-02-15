@@ -1105,6 +1105,14 @@ export default function HomePage() {
           )}
         </div>
 
+        {/* History Backdrop (Mobile only) */}
+        {isMobile && !historyCollapsed && (
+          <div
+            className={`history-backdrop ${!historyCollapsed ? 'visible' : ''}`}
+            onClick={() => setHistoryCollapsed(true)}
+          />
+        )}
+
         {/* History Drawer */}
         <HistoryDrawer history={history} onHistoryClick={handleHistoryClick} />
       </div>
