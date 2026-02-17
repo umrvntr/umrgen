@@ -130,6 +130,7 @@ export default function HomePage() {
 
           try {
             await uploadReference(file);
+            await navigator.clipboard.writeText('');
           } catch (error) {
             alert(error instanceof Error ? error.message : 'Paste upload failed');
           }
@@ -1209,7 +1210,7 @@ export default function HomePage() {
             </div>
 
             <div style={{ marginTop: 24, fontSize: 9, color: 'var(--text-dim)' }}>
-              DON'T HAVE A KEY? <a href="#" style={{ color: 'var(--pro-gold)', fontWeight: 700 }}>GET ONE HERE</a>
+              GET YOUR KEY IN <a href="https://t.me/+mL7RadPbI9VlYjYy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--pro-gold)', fontWeight: 700 }}>@umrlab</a>
             </div>
           </div>
         </div>
