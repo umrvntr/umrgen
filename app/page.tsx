@@ -112,8 +112,8 @@ export default function HomePage() {
           if (!file) continue;
 
           // Optimization: Check reference count before attempting upload
-          if (referenceImages.length >= 5) {
-            alert('Reference limit reached (max 5).');
+          if (referenceImages.length >= 10) {
+            alert('Reference limit reached (max 10).');
             break;
           }
 
@@ -791,7 +791,7 @@ export default function HomePage() {
 
           {/* Reference Images */}
           <div className="section">
-            <label className="label">REFERENCES ({referenceImages.length}/5)</label>
+            <label className="label">REFERENCES ({referenceImages.length}/10)</label>
             <div className="ref-grid">
               {referenceImages.map((ref) => (
                 <div key={ref.name} className="ref-thumb">
@@ -804,7 +804,7 @@ export default function HomePage() {
                   </button>
                 </div>
               ))}
-              {referenceImages.length < 5 && (
+              {referenceImages.length < 10 && (
                 <button
                   className="ref-add"
                   onClick={() => fileInputRef.current?.click()}
