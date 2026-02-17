@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Menu, X, Upload, Trash2, Zap, Lock, Key, AlertCircle, ChevronLeft, ChevronRight, Sliders, ChevronDown, Plus, Download, Globe, FileUp, History } from 'lucide-react';
+import { Menu, X, Upload, Trash2, Zap, Lock, Key, AlertCircle, ChevronLeft, ChevronRight, Sliders, ChevronDown, Plus, Download, Globe, FileUp, History, RotateCw } from 'lucide-react';
 import useStore, { getSessionId } from '@/lib/store';
 import { LoraConfig } from '@/types';
 import HistoryDrawer from '@/components/HistoryDrawer';
@@ -67,6 +67,7 @@ export default function HomePage() {
     pp_glare: false,
     pp_others: false,
     loras: true,
+    ratios: false,
   });
 
   const toggleAccordion = (id: string) => {
@@ -170,6 +171,13 @@ export default function HomePage() {
   const isGenerating = generation.status === 'running' || generation.status === 'queued';
   const showSystemMonitor = systemStatus.userPosition !== null && generation.status === 'idle';
   const showTerminal = isGenerating || showSystemMonitor;
+  const generateDisabledReason = isGenerating
+    ? 'Generation in progress'
+    : !prompt.trim()
+      ? 'Prompt is empty'
+      : (!isPro && systemStatus.dailyRemaining <= 0)
+        ? 'Daily free limit reached'
+        : null;
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -240,7 +248,10 @@ export default function HomePage() {
     <div className="app-container">
       {/* Mobile Toggle */}
       {isMobile && !sidebarOpen && (
-        <button className="btn mobile-toggle" onClick={() => setSidebarOpen(true)}>
+        <button className="btn mobile-toggle" onClick={() => {
+          setSidebarOpen(true);
+          if (isMobile) setHistoryCollapsed(true);
+        }}>
           <Menu size={16} />
         </button>
       )}
@@ -278,7 +289,11 @@ export default function HomePage() {
             )}
             <button
               className={`btn btn-sm ${!historyCollapsed ? 'active' : ''}`}
-              onClick={() => setHistoryCollapsed(!historyCollapsed)}
+              onClick={() => {
+                const newCollapsed = !historyCollapsed;
+                setHistoryCollapsed(newCollapsed);
+                if (isMobile && !newCollapsed) setSidebarOpen(false);
+              }}
               title="Toggle History"
             >
               <History size={14} />
@@ -312,17 +327,28 @@ export default function HomePage() {
 
           {/* Aspect Ratio */}
           <div className="section">
-            <label className="label">RATIO</label>
-            <div className="ratio-grid">
-              {['1:1', '4:3', '3:4', '16:9', '9:16', '4:5', '21:9'].map((r) => (
-                <button
-                  key={r}
-                  className={`ratio-btn ${ratio === r ? 'active' : ''}`}
-                  onClick={() => setRatio(r)}
-                >
-                  {r}
-                </button>
-              ))}
+            <div className="accordion">
+              <div className="accordion-header" onClick={() => toggleAccordion('ratios')}>
+                <label className="label" style={{ marginBottom: 0, cursor: 'pointer' }}>RATIO</label>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <ChevronDown size={14} className={`accordion-icon ${openAccordions.ratios ? 'open' : ''}`} />
+                </div>
+              </div>
+              {openAccordions.ratios && (
+                <div className="accordion-content ratio-accordion-content">
+                  <div className="ratio-grid">
+                    {['1:1', '4:3', '3:4', '16:9', '9:16', '4:5', '5:4', '2:3', '3:2'].map((r) => (
+                      <button
+                        key={r}
+                        className={`ratio-btn ${ratio === r ? 'active' : ''}`}
+                        onClick={() => setRatio(r)}
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -345,7 +371,7 @@ export default function HomePage() {
               <input
                 type="range"
                 min="5"
-                max="50"
+                max="13"
                 value={steps}
                 onChange={(e) => setSteps(parseInt(e.target.value))}
                 className="steps-slider"
@@ -693,40 +719,44 @@ export default function HomePage() {
                                 { label: 'MODEL STR', key: 'strength_model' },
                                 { label: 'CLIP STR', key: 'strength_clip' },
                               ].map((item) => (
-                                <div key={item.key} className="pp-item">
+                                <div key={item.key} className="pp-item lora-strength-item">
                                   <span className="pp-label">{item.label}</span>
-                                  <datalist id="lora-ticks">
-                                    <option value="-10"></option>
-                                    <option value="-5"></option>
-                                    <option value="-2"></option>
-                                    <option value="-1"></option>
-                                    <option value="-0.5"></option>
-                                    <option value="0"></option>
-                                    <option value="0.5"></option>
-                                    <option value="1"></option>
-                                    <option value="2"></option>
-                                    <option value="5"></option>
-                                    <option value="10"></option>
-                                  </datalist>
-                                  <input
-                                    type="range"
-                                    min="-10"
-                                    max="10"
-                                    step="0.1"
-                                    list="lora-ticks"
-                                    value={(lora as any)[item.key]}
-                                    onChange={(e) => {
-                                      let val = parseFloat(e.target.value);
-                                      const abs = Math.abs(val);
-                                      // If outside the "fine" range (1.0), snap to 0.5 increments
-                                      if (abs > 1.0) {
-                                        val = Math.round(val * 2) / 2;
-                                      }
-                                      updateLora(lora.id, { [item.key]: val });
-                                    }}
-                                    className="pp-slider lora-slider"
-                                  />
-                                  <span className="pp-value">{Number((lora as any)[item.key]).toFixed(1)}</span>
+                                  <div className="lora-strength-control">
+                                    <button
+                                      className="btn btn-sm lora-step-btn"
+                                      onClick={() => {
+                                        const currentVal = (lora as any)[item.key];
+                                        const newVal = Math.max(-10, currentVal - 0.1);
+                                        updateLora(lora.id, { [item.key]: newVal });
+                                      }}
+                                    >
+                                      <ChevronLeft size={12} />
+                                    </button>
+                                    <input
+                                      type="number"
+                                      step="0.1"
+                                      min="-10"
+                                      max="10"
+                                      value={Number((lora as any)[item.key]).toFixed(1)}
+                                      onChange={(e) => {
+                                        const val = parseFloat(e.target.value);
+                                        if (!isNaN(val) && val >= -10 && val <= 10) {
+                                          updateLora(lora.id, { [item.key]: val });
+                                        }
+                                      }}
+                                      className="lora-strength-input"
+                                    />
+                                    <button
+                                      className="btn btn-sm lora-step-btn"
+                                      onClick={() => {
+                                        const currentVal = (lora as any)[item.key];
+                                        const newVal = Math.min(10, currentVal + 0.1);
+                                        updateLora(lora.id, { [item.key]: newVal });
+                                      }}
+                                    >
+                                      <ChevronRight size={12} />
+                                    </button>
+                                  </div>
                                 </div>
                               ))}
                             </div>
@@ -864,7 +894,8 @@ export default function HomePage() {
           <button
             className="btn btn-primary generate-btn"
             onClick={generate}
-            disabled={isGenerating || !prompt.trim() || (!isPro && systemStatus.dailyRemaining <= 0)}
+            disabled={Boolean(generateDisabledReason)}
+            title={generateDisabledReason ?? undefined}
           >
             {isGenerating ? (
               <>
@@ -878,6 +909,11 @@ export default function HomePage() {
               </>
             )}
           </button>
+          {generateDisabledReason && (
+            <div style={{ marginTop: 6, fontSize: 10, color: 'var(--text-dim)', letterSpacing: '0.04em' }}>
+              {generateDisabledReason.toUpperCase()}
+            </div>
+          )}
         </div>
       </aside>
 
@@ -994,25 +1030,32 @@ export default function HomePage() {
                 )}
               </div>
 
-              {/* Live Preview Section */}
-              {isGenerating && generation.preview && (
-                <div className="step-preview-zone">
-                  <div className="preview-header">
-                    <span style={{ color: 'var(--accent)', fontWeight: 700 }}>LIVE SYNTHESIS FEED</span>
-                    <span style={{ color: 'var(--success)' }}>STEP {Math.min(steps, Math.ceil((progress / 100) * steps) || 1)}/{steps}</span>
-                  </div>
-                  <div className="preview-viewport">
-                    <img src={generation.preview} alt="Preview" className="step-image" />
-                    <div className="preview-overlay">
-                      <div className="scan-line" />
-                      <div className="preview-grid" />
-                    </div>
-                  </div>
-                </div>
-              )}
+      {/* Live Preview Section */}
+      {isGenerating && generation.preview && (
+        <div className="step-preview-zone">
+          <div className="preview-header">
+            <span style={{ color: 'var(--accent)', fontWeight: 700 }}>LIVE SYNTHESIS FEED</span>
+          </div>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: 16,
+            fontSize: 9,
+            marginTop: 8,
+            borderTop: '1px solid var(--border-dim)',
+            paddingTop: 12
+          }}>
+            <div style={{ color: 'var(--text-dim)', marginBottom: 2 }}>STEP</div>
+            <div style={{ color: 'var(--success)', fontWeight: 700 }}>
+              {Math.min(steps, Math.ceil((progress / 100) * steps) || 1).toString().padStart(2, '0')}/{steps.toString().padStart(2, '0')}
+            </div>
+            <div style={{ textAlign: 'center', color: 'var(--text-dim)' }}>LATENT {Math.min(steps, Math.ceil((progress / 100) * steps) || 1).toString().padStart(2, '0')} / {steps.toString().padStart(2, '0')}</div>
+          </div>
+        </div>
+      )}
 
-              {/* Technical Synthesis Progress Bar (only for active users) */}
-              {isGenerating && (
+          {/* Technical Synthesis Progress Bar (only for active users) */}
+          {isGenerating && (
                 <div style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -1130,7 +1173,7 @@ export default function HomePage() {
           <div className="modal-box">
             <div className="modal-title">UPGRADE TO PRO</div>
             <p className="modal-desc">
-              Unlock maximum performance with up to 50 steps, advanced post-processing, LoRA support, and direct GPU access.
+              Unlock maximum performance with up to 13 steps, advanced post-processing, LoRA support, and direct GPU access.
             </p>
 
             <input

@@ -604,6 +604,54 @@ textarea.prompt-input {
   text-align: right;
 }
 
+/* LoRA Strength Control */
+.lora-strength-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.lora-step-btn {
+  padding: 8px;
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lora-strength-input {
+  flex: 1;
+  text-align: center;
+  background: rgba(10, 240, 255, 0.05);
+  border: 1px solid var(--accent-dim);
+  color: var(--accent);
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  -moz-appearance: textfield;
+}
+
+.lora-strength-input::-webkit-outer-spin-button,
+.lora-strength-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.lora-strength-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-dim);
+}
+
+.pp-item.lora-strength-item {
+  grid-template-columns: 80px 1fr;
+}
+
 .lora-progress-container {
   height: 2px;
   background: var(--border-dim);
@@ -647,6 +695,11 @@ textarea.prompt-input {
   background: var(--accent-dim);
   border-color: var(--accent);
   color: var(--accent);
+}
+
+/* Ratio Accordion Content */
+.ratio-accordion-content {
+  padding: 12px;
 }
 
 /* Reference Images */

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { AppState, PostProcessConfig, ReferenceImage, HistoryItem, ProState, LoraConfig } from '@/types';
+import type { AppState, PostProcessConfig, ReferenceImage, HistoryItem, ProState, LoraConfig, GenerationState } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 
 // Session ID - persisted in localStorage
@@ -24,24 +24,31 @@ const loadProState = (): ProState => {
   if (typeof window === 'undefined') {
     return { token: null, plan: 'free', limit: null, remaining: null };
   }
-  const token = localStorage.getItem('umrgen_pro_token');
-  if (token) {
-    try {
-      const [body] = token.split('.');
-      const payload = JSON.parse(atob(body));
-      if (payload.exp > Date.now()) {
-        return {
-          token,
-          plan: payload.plan || 'pro',
-          limit: payload.limit || null,
-          remaining: payload.limit || null,
-        };
-      }
-    } catch {
-      localStorage.removeItem('umrgen_pro_token');
+  try {
+    const stored = localStorage.getItem('umrgen_pro_token');
+    if (stored) {
+      const decoded = JSON.parse(atob(stored.split('.')[1]));
+      return {
+        token: stored,
+        plan: decoded.plan || 'free',
+        limit: decoded.limit || null,
+        remaining: decoded.remaining || null,
+      };
     }
-  }
+  } catch {}
   return { token: null, plan: 'free', limit: null, remaining: null };
+};
+
+const INITIAL_GENERATION_STATE: GenerationState = {
+  status: 'idle',
+  progress: 0,
+  image: null,
+  preview: null,
+  error: null,
+  jobId: null,
+  queuePosition: null,
+  eta: null,
+  ipLimitNotice: false,
 };
 
 const useStore = create<AppState>((set, get) => ({
@@ -79,17 +86,7 @@ const useStore = create<AppState>((set, get) => ({
   },
 
   // Generation State
-  generation: {
-    status: 'idle',
-    progress: 0,
-    image: null,
-    preview: null,
-    error: null,
-    jobId: null,
-    queuePosition: null,
-    eta: null,
-    ipLimitNotice: false,
-  },
+  generation: { ...INITIAL_GENERATION_STATE },
 
   // Reference Images State
   referenceImages: [],
@@ -154,17 +151,7 @@ const useStore = create<AppState>((set, get) => ({
 
   resetGeneration: () =>
     set({
-      generation: {
-        status: 'idle',
-        progress: 0,
-        image: null,
-        preview: null,
-        error: null,
-        jobId: null,
-        queuePosition: null,
-        eta: null,
-        ipLimitNotice: false,
-      },
+      generation: { ...INITIAL_GENERATION_STATE },
     }),
 
   fetchHistory: async () => {
@@ -289,8 +276,6 @@ const useStore = create<AppState>((set, get) => ({
     })),
 
   loadFromHistory: (item: HistoryItem) => {
-    const sid = getSessionId();
-
     const updates: Partial<AppState> = {
       prompt: item.prompt,
       negativePrompt: item.negative || '',
@@ -324,16 +309,8 @@ const useStore = create<AppState>((set, get) => ({
       updates.ppEnabled = false;
     }
 
-    if (item.loras && item.loras.length > 0) {
-      updates.loras = item.loras;
-    }
-
-    if (item.reference_images && item.reference_images.length > 0) {
-      updates.referenceImages = item.reference_images.map((name) => ({
-        name,
-        url: `/references/${sid}/${name}?session_id=${encodeURIComponent(sid)}`,
-      }));
-    }
+    updates.referenceImages = [];
+    updates.loras = [];
 
     set(updates);
   },
@@ -547,15 +524,8 @@ const useStore = create<AppState>((set, get) => ({
 
     set({
       generation: {
+        ...INITIAL_GENERATION_STATE,
         status: 'queued',
-        progress: 0,
-        image: null,
-        preview: null,
-        error: null,
-        jobId: null,
-        queuePosition: null,
-        eta: null,
-        ipLimitNotice: false,
       },
     });
 
@@ -660,21 +630,46 @@ const useStore = create<AppState>((set, get) => ({
  */
 
 function startJobLifecycle(jobId: string, ipNotice = false) {
+  let pollInterval: ReturnType<typeof setInterval> | null = null;
+
+  const updateGeneration = (patch: Partial<GenerationState>) => {
+    useStore.setState((s: AppState) => ({
+      generation: { ...s.generation, ...patch },
+    }));
+  };
+
+  const finalizeWithError = (message: string) => {
+    cleanupResources();
+    updateGeneration({ status: 'error', error: message, ipLimitNotice: false });
+  };
+
+  const finalizeWithSuccess = (imageUrl: string) => {
+    cleanupResources();
+    updateGeneration({ status: 'success', image: imageUrl, progress: 100, ipLimitNotice: false });
+    useStore.getState().addToHistory({
+      id: jobId,
+      prompt: useStore.getState().prompt,
+      imageUrl,
+      timestamp: Date.now(),
+    });
+  };
+
   // Update state to running
-  useStore.setState((s: AppState) => ({
-    generation: {
-      ...s.generation,
-      jobId,
-      status: 'running',
-      error: null,
-      ipLimitNotice: ipNotice,
-    },
-  }));
+  updateGeneration({
+    jobId,
+    status: 'running',
+    error: null,
+    ipLimitNotice: ipNotice,
+  });
 
   const eventSource = new EventSource(`/api/job/${jobId}/stream?session_id=${encodeURIComponent(getSessionId())}`);
 
   const cleanupResources = () => {
     eventSource.close();
+    if (pollInterval) {
+      clearInterval(pollInterval);
+      pollInterval = null;
+    }
   };
 
   eventSource.onmessage = (event) => {
@@ -682,14 +677,13 @@ function startJobLifecycle(jobId: string, ipNotice = false) {
       const data = JSON.parse(event.data);
       if (data.type === 'progress' && data.total > 0) {
         const progress = (data.step / data.total) * 100;
-        useStore.setState((s: AppState) => ({
-          generation: { ...s.generation, progress },
-        }));
+        updateGeneration({ progress });
       }
       if (data.type === 'preview' && data.image) {
-        useStore.setState((s: AppState) => ({
-          generation: { ...s.generation, preview: `data:image/jpeg;base64,${data.image}` },
-        }));
+        updateGeneration({ preview: `data:image/jpeg;base64,${data.image}` });
+      }
+      if (data.type === 'error') {
+        finalizeWithError(data.message || 'Generation failed');
       }
     } catch (err) {
       console.error('[SSE] Data parse error:', err);
@@ -700,52 +694,29 @@ function startJobLifecycle(jobId: string, ipNotice = false) {
     eventSource.close();
   };
 
-  const pollInterval = setInterval(async () => {
+  pollInterval = setInterval(async () => {
     try {
       const response = await fetch(`/api/job/${jobId}/status`);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const data = await response.json();
 
-      useStore.setState((s: AppState) => ({
-        generation: {
-          ...s.generation,
-          queuePosition: data.queue_position ?? null,
-          eta: data.eta_seconds ?? null,
-        },
-      }));
+      updateGeneration({
+        queuePosition: data.queue_position ?? null,
+        eta: data.eta_seconds ?? null,
+      });
 
       if (data.state === 'completed') {
-        cleanupResources();
-        clearInterval(pollInterval);
         const imageUrl = data.results?.images?.[0]?.url;
         if (imageUrl) {
-          useStore.setState((s: AppState) => ({
-            generation: { ...s.generation, status: 'success', image: imageUrl, progress: 100, ipLimitNotice: false },
-          }));
-          useStore.getState().addToHistory({
-            id: jobId,
-            prompt: useStore.getState().prompt,
-            imageUrl,
-            timestamp: Date.now(),
-          });
+          finalizeWithSuccess(imageUrl);
         } else {
-          useStore.setState((s: AppState) => ({
-            generation: { ...s.generation, status: 'error', error: 'No image returned', ipLimitNotice: false },
-          }));
+          finalizeWithError('No image returned');
         }
       } else if (data.state === 'failed') {
-        cleanupResources();
-        clearInterval(pollInterval);
-        useStore.setState((s: AppState) => ({
-          generation: { ...s.generation, status: 'error', error: data.error || 'Generation failed', ipLimitNotice: false },
-        }));
+        finalizeWithError(data.error || 'Generation failed');
       } else if (data.state === 'unknown') {
-        cleanupResources();
-        clearInterval(pollInterval);
-        useStore.setState((s: AppState) => ({
-          generation: { ...s.generation, status: 'error', error: 'Job expired', ipLimitNotice: false },
-        }));
+        finalizeWithError('Job expired');
       }
     } catch (err) {
       console.warn('[POLL] Error:', err);

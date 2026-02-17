@@ -57,7 +57,7 @@ const loraImportProgress = new Map();
 
 // Reference Image Configuration
 const REF_IMAGE_SIZE_LIMIT = 10 * 1024 * 1024; // 10 MB per image
-const MAX_REF_IMAGES = 5;
+const MAX_REF_IMAGES = 10;
 
 // SESSION ID VALIDATION: Prevent path traversal attacks
 function validateSessionId(session_id) {
@@ -238,6 +238,8 @@ const MASTER_PRO_KEY = (process.env.MASTER_PRO_KEY || "umr8888").trim();
 const LIMITED_PRO_KEY = (process.env.TEST50 || "TEST50").trim();
 const LIMITED_PRO_LIMIT = parseInt(process.env.TEST50_LIMIT || "50", 10);
 const LIMITED_PRO_USAGE = new Map();
+const LIMITED_KEY_ACTIVATIONS = new Map();
+const IP_TRACKED_KEYS = ['TEST50'];
 
 const TRIGGER_CONFIG = {
   MINORS: {
@@ -430,6 +432,10 @@ async function processQueue() {
     if (p.session_id && p.reference_images && Array.isArray(p.reference_images)) {
       const refPath = getSessionReferencePath(p.session_id);
       for (const filename of p.reference_images) {
+        if (!filename || typeof filename !== 'string') {
+          console.warn(`[QUEUE] Skipping invalid reference image entry: ${filename}`);
+          continue;
+        }
         const fullPath = path.join(refPath, filename);
         if (fs.existsSync(fullPath)) {
           referenceImages.push(fullPath);
@@ -483,6 +489,8 @@ async function processQueue() {
     debugLog(`[QUEUE] Job ${nextJob.job_id} FAILED: ${err.message}`);
     nextJob.state = "failed";
     nextJob.error = err.message;
+    // Broadcast error to frontend so users know what happened
+    broadcastToJob(nextJob.job_id, { type: 'error', message: err.message });
   } finally {
     setTimeout(() => {
       const idx = GLOBAL_QUEUE.findIndex(j => j.job_id === nextJob.job_id);
@@ -511,7 +519,10 @@ async function buildWorkflowKlein(options) {
   const height = parseInt(heightVal) || 1024;
 
   let activeUnet = unet_name;
-  if (activeUnet === "flux-2-klein-9b-Q8_0.gguf") {
+  if (activeUnet.toLowerCase() === "flux-2-klein-9b-q8_0.gguf") {
+    activeUnet = "flux-2-klein-9b-Q6_K.gguf";
+  }
+  if (activeUnet.toLowerCase() === "flux-2-klein-9b-q6_k.gguf") {
     activeUnet = "flux-2-klein-9b-Q6_K.gguf";
   }
 
@@ -683,6 +694,10 @@ async function buildWorkflowKlein(options) {
   let negativeCondNode = ["5", 0];
 
   referenceImages.forEach((imagePath) => {
+    if (!imagePath || typeof imagePath !== 'string') {
+      console.warn(`[WORKFLOW] Skipping invalid reference image path: ${imagePath}`);
+      return;
+    }
     const loadId = nodeId++;
     const scaleId = nodeId++;
     const encodeId = nodeId++;
@@ -978,7 +993,7 @@ app.post("/api/v1/generate", authenticateExternalAgent, async (req, res) => {
       negative: negative || "bad quality, blurry",
       width: clamp(width || 1024, 512, 2048),
       height: clamp(height || 1024, 512, 2048),
-      steps: clamp(steps || 4, 1, 50),
+      steps: clamp(steps || 4, 1, 13),
       seed: seed || Math.floor(Math.random() * 999999999),
       loras: loras || [],
       reference_images: reference_images || [],
@@ -1233,8 +1248,13 @@ app.post("/api/upload/reference", upload.single("file"), async (req, res) => {
     const targetPath = path.join(targetDir, safeName);
 
     if (fs.existsSync(targetPath)) {
+      console.log(`[REF] Upload skip - file already exists: ${safeName}`);
       if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
-      return res.status(409).json({ error: "File with this name already exists." });
+      return res.json({
+        success: true,
+        filename: safeName,
+        url: `/references/${session_id}/${safeName}?session_id=${encodeURIComponent(session_id)}`
+      });
     }
 
     await moveFile(req.file.path, targetPath);
@@ -1294,6 +1314,12 @@ app.post("/api/upload/lora", loraUpload.single("file"), async (req, res) => {
 
     const targetDir = getSessionLoraPath(session_id);
     const targetPath = path.join(targetDir, safeName);
+
+    if (fs.existsSync(targetPath)) {
+      console.log(`[LORA] Upload skip - file already exists: ${safeName}`);
+      if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
+      return res.json({ success: true, filename: safeName });
+    }
 
     // Use robust move utility
     await moveFile(req.file.path, targetPath);
@@ -1553,6 +1579,9 @@ app.post("/api/generate", async (req, res) => {
     const token = req.headers.authorization?.split(" ")[1];
     const { plan, limit } = verifyProToken(token);
     const isPro = (plan === "pro");
+    if (req.body.steps && isPro && req.body.steps > 13) {
+      req.body.steps = 13;
+    }
     const triggerMatch = scanText(prompt, isPro) || scanText(negative, isPro);
     if (triggerMatch === "MINORS") return res.status(403).json({ error: "CONTENT_BLOCKED", reason: "MINORS_NOT_ALLOWED" });
     if (triggerMatch === "ADULT_NSFW") return res.status(403).json({ error: "PRO_REQUIRED", reason: "ADULT_NSFW" });
@@ -1683,7 +1712,32 @@ app.use('/api', (err, req, res, next) => {
   });
 });
 
-const startServer = (port) => {
+async function checkComfyConnection() {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const resp = await fetch(`${COMFY_HTTP}/system_stats`, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (resp.ok) {
+      console.log(`[COMFY] Connected to ${COMFY_HOST}`);
+      return true;
+    }
+  } catch (e) {
+    console.error(`[COMFY] ERROR: Cannot connect to ComfyUI at ${COMFY_HOST}`);
+    console.error(`[COMFY] Please ensure ComfyUI is running on ${COMFY_HOST}`);
+    console.error(`[COMFY] Error: ${e.message}`);
+  }
+  return false;
+}
+
+const startServer = async (port) => {
+  // Check ComfyUI connection before starting
+  const comfyOk = await checkComfyConnection();
+  if (!comfyOk) {
+    console.error(`\n>>> WARNING: ComfyUI not detected. Generation requests will fail.`);
+    console.error(`>>> Please start ComfyUI on ${COMFY_HOST} before generating images.\n`);
+  }
+  
   const server = app.listen(port, "0.0.0.0", () => {
     console.log(`\n>>> UMRGEN v0.9.0-klein Ready on http://localhost:${port}\n`);
   });
