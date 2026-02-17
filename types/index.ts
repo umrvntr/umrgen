@@ -185,6 +185,7 @@ export interface AppState {
   fetchReferenceImages: () => Promise<void>;
   uploadReference: (file: File) => Promise<void>;
   deleteReference: (filename: string) => Promise<void>;
+  reorderReferences: (fromIndex: number, toIndex: number) => void;
 
   // History actions
   addToHistory: (item: HistoryItem) => void;

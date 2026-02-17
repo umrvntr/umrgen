@@ -30,6 +30,7 @@ export default function HomePage() {
     fetchReferenceImages,
     uploadReference,
     deleteReference,
+    reorderReferences,
     loadFromHistory,
     fetchHistory,
     fetchSystemStatus,
@@ -60,6 +61,8 @@ export default function HomePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const loraFileInputRef = useRef<HTMLInputElement>(null);
   const [activeLoraId, setActiveLoraId] = useState<string | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   const [openAccordions, setOpenAccordions] = useState<Record<string, boolean>>({
     pp_color: true,
@@ -72,6 +75,39 @@ export default function HomePage() {
 
   const toggleAccordion = (id: string) => {
     setOpenAccordions(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  // Reference image drag handlers
+  const handleDragStart = (index: number) => (e: React.DragEvent) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+  };
+
+  const handleDragOver = (index: number) => (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (dragOverIndex !== index) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDrop = (targetIndex: number) => (e: React.DragEvent) => {
+    e.preventDefault();
+    if (draggedIndex !== null && draggedIndex !== targetIndex) {
+      reorderReferences(draggedIndex, targetIndex);
+    }
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
   };
 
   const isPro = pro.plan === 'pro';
@@ -794,8 +830,18 @@ export default function HomePage() {
           <div className="section">
             <label className="label">REFERENCES ({referenceImages.length}/10)</label>
             <div className="ref-grid">
-              {referenceImages.map((ref) => (
-                <div key={ref.name} className="ref-thumb">
+              {referenceImages.map((ref, index) => (
+                <div
+                  key={ref.name}
+                  className={`ref-thumb ${draggedIndex === index ? 'dragging' : ''} ${dragOverIndex === index ? 'drag-over' : ''}`}
+                  draggable
+                  onDragStart={handleDragStart(index)}
+                  onDragOver={handleDragOver(index)}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop(index)}
+                  onDragEnd={handleDragEnd}
+                >
+                  <span className="ref-number">{index + 1}</span>
                   <img src={ref.url} alt={ref.name} />
                   <button
                     className="delete-btn"

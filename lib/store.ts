@@ -269,6 +269,15 @@ const useStore = create<AppState>((set, get) => ({
     }
   },
 
+  reorderReferences: (fromIndex: number, toIndex: number) => {
+    set((state) => {
+      const images = [...state.referenceImages];
+      const [removed] = images.splice(fromIndex, 1);
+      images.splice(toIndex, 0, removed);
+      return { referenceImages: images };
+    });
+  },
+
   // History Actions
   addToHistory: (item: HistoryItem) =>
     set((state) => ({
