@@ -715,7 +715,14 @@ textarea.prompt-input {
   border: 1px solid var(--border-dim);
   overflow: hidden;
   position: relative;
-  cursor: pointer;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ref-thumb:active {
+  cursor: grabbing;
 }
 
 .ref-thumb img {
@@ -766,11 +773,8 @@ textarea.prompt-input {
 .ref-thumb.dragging {
   opacity: 0.5;
   border: 2px dashed var(--accent);
-}
-
-.ref-thumb.drag-over {
-  border: 2px solid var(--accent);
-  background: var(--accent-dim);
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 .ref-add {

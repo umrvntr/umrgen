@@ -2,9 +2,50 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { Menu, X, Upload, Trash2, Zap, Lock, Key, AlertCircle, ChevronLeft, ChevronRight, Sliders, ChevronDown, Plus, Download, Globe, FileUp, History, RotateCw } from 'lucide-react';
+import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import useStore, { getSessionId } from '@/lib/store';
-import { LoraConfig } from '@/types';
+import { LoraConfig, ReferenceImage } from '@/types';
 import HistoryDrawer from '@/components/HistoryDrawer';
+
+// Sortable Reference Image Component for @dnd-kit
+function SortableRefThumb({ 
+  refImage, 
+  index, 
+  onDelete 
+}: { 
+  refImage: ReferenceImage; 
+  index: number; 
+  onDelete: () => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
+    id: refImage.name 
+  });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    touchAction: 'none',
+  };
+
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className={`ref-thumb ${isDragging ? 'dragging' : ''}`}
+      {...attributes} 
+      {...listeners}
+    >
+      <span className="ref-number">{index + 1}</span>
+      <img src={refImage.url} alt={refImage.name} />
+      <button className="delete-btn" onClick={onDelete}>
+        <Trash2 size={10} />
+      </button>
+    </div>
+  );
+}
 
 export default function HomePage() {
   const {
@@ -61,8 +102,6 @@ export default function HomePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const loraFileInputRef = useRef<HTMLInputElement>(null);
   const [activeLoraId, setActiveLoraId] = useState<string | null>(null);
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   const [openAccordions, setOpenAccordions] = useState<Record<string, boolean>>({
     pp_color: true,
@@ -77,37 +116,16 @@ export default function HomePage() {
     setOpenAccordions(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  // Reference image drag handlers
-  const handleDragStart = (index: number) => (e: React.DragEvent) => {
-    setDraggedIndex(index);
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', index.toString());
-  };
-
-  const handleDragOver = (index: number) => (e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    if (dragOverIndex !== index) {
-      setDragOverIndex(index);
+  // @dnd-kit drag end handler
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = referenceImages.findIndex(r => r.name === active.id);
+      const newIndex = referenceImages.findIndex(r => r.name === over.id);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        reorderReferences(oldIndex, newIndex);
+      }
     }
-  };
-
-  const handleDragLeave = () => {
-    setDragOverIndex(null);
-  };
-
-  const handleDrop = (targetIndex: number) => (e: React.DragEvent) => {
-    e.preventDefault();
-    if (draggedIndex !== null && draggedIndex !== targetIndex) {
-      reorderReferences(draggedIndex, targetIndex);
-    }
-    setDraggedIndex(null);
-    setDragOverIndex(null);
-  };
-
-  const handleDragEnd = () => {
-    setDraggedIndex(null);
-    setDragOverIndex(null);
   };
 
   const isPro = pro.plan === 'pro';
@@ -829,45 +847,36 @@ export default function HomePage() {
           {/* Reference Images */}
           <div className="section">
             <label className="label">REFERENCES ({referenceImages.length}/10)</label>
-            <div className="ref-grid">
-              {referenceImages.map((ref, index) => (
-                <div
-                  key={ref.name}
-                  className={`ref-thumb ${draggedIndex === index ? 'dragging' : ''} ${dragOverIndex === index ? 'drag-over' : ''}`}
-                  draggable
-                  onDragStart={handleDragStart(index)}
-                  onDragOver={handleDragOver(index)}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop(index)}
-                  onDragEnd={handleDragEnd}
-                >
-                  <span className="ref-number">{index + 1}</span>
-                  <img src={ref.url} alt={ref.name} />
-                  <button
-                    className="delete-btn"
-                    onClick={() => deleteReference(ref.name)}
-                  >
-                    <Trash2 size={10} />
-                  </button>
-                </div>
-              ))}
-              {referenceImages.length < 10 && (
-                <button
-                  className="ref-add"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploadingReference}
-                >
-                  {uploadingReference ? (
-                    <div className="spinner" />
-                  ) : (
-                    <>
-                      <Upload size={14} />
-                      <span>ADD</span>
-                    </>
+            <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={referenceImages.map(r => r.name)} strategy={rectSortingStrategy}>
+                <div className="ref-grid">
+                  {referenceImages.map((ref, index) => (
+                    <SortableRefThumb 
+                      key={ref.name} 
+                      refImage={ref} 
+                      index={index} 
+                      onDelete={() => deleteReference(ref.name)} 
+                    />
+                  ))}
+                  {referenceImages.length < 10 && (
+                    <button
+                      className="ref-add"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploadingReference}
+                    >
+                      {uploadingReference ? (
+                        <div className="spinner" />
+                      ) : (
+                        <>
+                          <Upload size={14} />
+                          <span>ADD</span>
+                        </>
+                      )}
+                    </button>
                   )}
-                </button>
-              )}
-            </div>
+                </div>
+              </SortableContext>
+            </DndContext>
             <input
               ref={fileInputRef}
               type="file"
