@@ -269,6 +269,17 @@ const useStore = create<AppState>((set, get) => ({
     }
   },
 
+  clearReferences: async () => {
+    const { referenceImages } = get();
+    const sid = getSessionId();
+    for (const ref of referenceImages) {
+      await fetch(`/api/references/${encodeURIComponent(ref.name)}?session_id=${encodeURIComponent(sid)}`, {
+        method: 'DELETE',
+      });
+    }
+    set({ referenceImages: [] });
+  },
+
   reorderReferences: (fromIndex: number, toIndex: number) => {
     set((state) => {
       const images = [...state.referenceImages];

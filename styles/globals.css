@@ -731,28 +731,6 @@ textarea.prompt-input {
   object-fit: cover;
 }
 
-.ref-thumb .delete-btn {
-  position: absolute;
-  top: 3px;
-  right: 3px;
-  width: 16px;
-  height: 16px;
-  background: rgba(0, 0, 0, 0.8);
-  border: none;
-  border-radius: 50%;
-  color: var(--danger);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.ref-thumb:hover .delete-btn {
-  opacity: 1;
-}
-
 .ref-thumb .ref-number {
   position: absolute;
   top: 3px;
@@ -775,6 +753,20 @@ textarea.prompt-input {
   border: 2px dashed var(--accent);
   z-index: 100;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.clear-refs-btn {
+  font-size: 9px;
+  padding: 2px 6px;
+  background: transparent;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  border-radius: 3px;
+  cursor: pointer;
+}
+.clear-refs-btn:hover {
+  background: var(--danger);
+  color: var(--bg);
 }
 
 .ref-add {

@@ -12,12 +12,10 @@ import HistoryDrawer from '@/components/HistoryDrawer';
 // Sortable Reference Image Component for @dnd-kit
 function SortableRefThumb({ 
   refImage, 
-  index, 
-  onDelete 
+  index 
 }: { 
   refImage: ReferenceImage; 
-  index: number; 
-  onDelete: () => void;
+  index: number;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
     id: refImage.name 
@@ -40,9 +38,6 @@ function SortableRefThumb({
     >
       <span className="ref-number">{index + 1}</span>
       <img src={refImage.url} alt={refImage.name} />
-      <button className="delete-btn" onClick={onDelete}>
-        <Trash2 size={10} />
-      </button>
     </div>
   );
 }
@@ -70,7 +65,7 @@ export default function HomePage() {
     generate,
     fetchReferenceImages,
     uploadReference,
-    deleteReference,
+    clearReferences,
     reorderReferences,
     loadFromHistory,
     fetchHistory,
@@ -846,7 +841,12 @@ export default function HomePage() {
 
           {/* Reference Images */}
           <div className="section">
-            <label className="label">REFERENCES ({referenceImages.length}/10)</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <label className="label" style={{ marginBottom: 0 }}>REFERENCES ({referenceImages.length}/10)</label>
+              {referenceImages.length > 0 && (
+                <button className="clear-refs-btn" onClick={clearReferences}>CLEAR</button>
+              )}
+            </div>
             <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <SortableContext items={referenceImages.map(r => r.name)} strategy={rectSortingStrategy}>
                 <div className="ref-grid">
@@ -855,7 +855,6 @@ export default function HomePage() {
                       key={ref.name} 
                       refImage={ref} 
                       index={index} 
-                      onDelete={() => deleteReference(ref.name)} 
                     />
                   ))}
                   {referenceImages.length < 10 && (
