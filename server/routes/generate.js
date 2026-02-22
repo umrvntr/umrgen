@@ -4,11 +4,9 @@ import { Router } from 'express';
 import { randomUUID } from 'node:crypto';
 import { MAX_QUEUE_SIZE } from '../config/constants.js';
 import { validateSessionId, scanText, getSessionReferencePath, debugLog } from '../services/file-utils.js';
-import { GLOBAL_QUEUE, checkDailyLimit, incrementDailyUsage, JOB_STREAMS, COMPLETED_TIMES, broadcastToJob, getJobStatus, getAverageGenTime } from '../services/queue.js';
-import { verifyProToken, consumeLimitedProUse, queuePrompt, waitForCompletion, processComfyOutputs } from '../services/comfyui.js';
-import { buildWorkflowKlein } from '../services/workflow.js';
+import { GLOBAL_QUEUE, checkDailyLimit, incrementDailyUsage, JOB_STREAMS, COMPLETED_TIMES, broadcastToJob, getJobStatus, getAverageGenTime, processQueue } from '../services/queue.js';
+import { verifyProToken, consumeLimitedProUse } from '../services/comfyui.js';
 import { rateLimit } from '../middleware/auth.js';
-import { addHistory } from './history.js';
 
 const router = Router();
 
@@ -92,7 +90,8 @@ router.post('/generate', rateLimit, async (req, res) => {
     })();
 
     console.log(`[AUDIT] Job Queued | ID: ${jobId} | Plan: ${plan}`);
-    processQueue();
+    
+    setImmediate(processQueue);
     
     res.json({
       job_id: jobId,
@@ -103,87 +102,6 @@ router.post('/generate', rateLimit, async (req, res) => {
     res.status(500).json({ error: err.message }); 
   }
 });
-
-async function processQueue() {
-  const activeJob = GLOBAL_QUEUE.find(j => j.state === 'running');
-  if (activeJob) return;
-  
-  const nextJob = GLOBAL_QUEUE.find(j => j.state === 'queued');
-  if (!nextJob) return;
-  
-  nextJob.state = 'running';
-  nextJob.started_at = Date.now();
-  debugLog(`[QUEUE] Processing Job ${nextJob.job_id}`);
-  
-  try {
-    const p = nextJob.parameters;
-
-    let referenceImages = [];
-    if (p.session_id && p.reference_images && Array.isArray(p.reference_images)) {
-      const refPath = getSessionReferencePath(p.session_id);
-      for (const filename of p.reference_images) {
-        if (!filename || typeof filename !== 'string') continue;
-        const fullPath = path.join(refPath, filename);
-        if (fs.existsSync(fullPath)) {
-          referenceImages.push(fullPath);
-        }
-      }
-    }
-
-    const workflow = await buildWorkflowKlein({
-      prompt: p.prompt,
-      negativePrompt: p.negative,
-      width: parseInt(p.width),
-      height: parseInt(p.height),
-      seed: p.seed || Math.floor(Math.random() * 999999999999),
-      referenceImages,
-      unet_name: p.unet_name,
-      steps: p.steps,
-      pp: p.post_processing || {},
-      loras: p.loras || [],
-      session_id: p.session_id
-    });
-
-    const { promptId, clientId } = await queuePrompt(workflow);
-    await waitForCompletion(promptId, clientId, nextJob.job_id);
-
-    const images = await processComfyOutputs(promptId, p.session_id);
-    nextJob.state = 'completed';
-    nextJob.results = { images };
-    nextJob.completed_at = Date.now();
-    
-    const duration = (nextJob.completed_at - nextJob.started_at) / 1000;
-    COMPLETED_TIMES.push(duration);
-    if (COMPLETED_TIMES.length > 10) COMPLETED_TIMES.shift();
-    
-    addHistory({
-      id: promptId,
-      job_id: nextJob.job_id,
-      timestamp: Date.now(),
-      prompt: nextJob.parameters.prompt,
-      negative: nextJob.parameters.negative,
-      imageUrl: images[0]?.url || '',
-      session_id: p.session_id,
-      width: p.width,
-      height: p.height,
-      steps: p.steps,
-      post_processing: p.post_processing,
-      loras: p.loras,
-      reference_images: p.reference_images
-    });
-  } catch (err) {
-    debugLog(`[QUEUE] Job ${nextJob.job_id} FAILED: ${err.message}`);
-    nextJob.state = 'failed';
-    nextJob.error = err.message;
-    broadcastToJob(nextJob.job_id, { type: 'error', message: err.message });
-  } finally {
-    setTimeout(() => {
-      const idx = GLOBAL_QUEUE.findIndex(j => j.job_id === nextJob.job_id);
-      if (idx > -1) GLOBAL_QUEUE.splice(idx, 1);
-    }, 60000);
-    setImmediate(processQueue);
-  }
-}
 
 router.get('/job/:job_id/status', (req, res) => {
   res.json(getJobStatus(req.params.job_id));

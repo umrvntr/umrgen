@@ -1,0 +1,6 @@
+[2026-02-22T22:07:31.476Z] [QUEUE] Processing Job 957cd9bd-74db-439a-aec6-e3eae1e081ff for session sid_test123
+[2026-02-22T22:07:31.486Z] [WORKFLOW] Built workflow for session sid_test123 with 14 nodes.
+[2026-02-22T22:07:31.486Z] [COMFY] Sending prompt with client_id 3828a812-f2b0-437f-9af4-52669517bc8b...
+[2026-02-22T22:07:31.492Z] [COMFY] Prompt Queued: e07c57f1-54ee-4a05-8991-86f6661240db
+[2026-02-22T22:07:31.494Z] [COMFY] WS Connecting for client 3828a812-f2b0-437f-9af4-52669517bc8b...
+[2026-02-22T22:07:31.499Z] [COMFY] WS Connected for client 3828a812-f2b0-437f-9af4-52669517bc8b

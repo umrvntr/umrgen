@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { randomUUID } from 'node:crypto';
 import { authenticateExternalAgent } from '../middleware/auth.js';
-import { GLOBAL_QUEUE, getJobStatus } from '../services/queue.js';
+import { GLOBAL_QUEUE, getJobStatus, processQueue } from '../services/queue.js';
 import { scanText } from '../services/file-utils.js';
 import { loadHistory } from './history.js';
 
@@ -51,6 +51,8 @@ router.post('/generate', authenticateExternalAgent, async (req, res) => {
       parameters: p,
       session_id: 'sid_ext_gen'
     });
+
+    setImmediate(processQueue);
 
     res.status(202).json({
       success: true,
