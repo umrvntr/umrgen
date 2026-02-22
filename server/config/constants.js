@@ -1,16 +1,21 @@
 import path from 'node:path';
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_ROOT = path.resolve(__dirname, '..', '..');
 
 export const PORT = process.env.PORT || 3088;
 export const COMFY_HOST = process.env.COMFY_HOST || '127.0.0.1:8188';
 export const COMFY_HTTP = `http://${COMFY_HOST}`;
 export const COMFY_WS = `ws://${COMFY_HOST}/ws`;
 
-export const OUTPUT_DIR = path.join(process.cwd(), 'outputs');
-export const HISTORY_PATH = path.join(process.cwd(), 'history.json');
-export const SESSIONS_ROOT = path.join(process.cwd(), 'sessions');
-export const LORAS_ROOT = process.env.LORAS_ROOT || path.join(process.cwd(), 'USER_LORA');
-export const TMP_UPLOADS = path.join(process.cwd(), 'tmp_uploads');
+export const OUTPUT_DIR = path.join(PROJECT_ROOT, 'outputs');
+export const HISTORY_PATH = path.join(PROJECT_ROOT, 'history.json');
+export const SESSIONS_ROOT = path.join(PROJECT_ROOT, 'sessions');
+export const LORAS_ROOT = process.env.LORAS_ROOT || path.join(PROJECT_ROOT, 'USER_LORA');
+export const TMP_UPLOADS = path.join(PROJECT_ROOT, 'tmp_uploads');
 
 export const LORA_SIZE_LIMIT = 2048 * 1024 * 1024;
 export const REF_IMAGE_SIZE_LIMIT = 10 * 1024 * 1024;

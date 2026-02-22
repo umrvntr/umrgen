@@ -2,6 +2,12 @@ import 'dotenv/config';
 import express from 'express';
 import path from 'node:path';
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_ROOT = path.resolve(__dirname, '..');
+
 import { PORT } from './config/constants.js';
 import { rateLimit } from './middleware/auth.js';
 import { cleanupSessions } from './services/file-utils.js';
@@ -29,10 +35,11 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 app.use('/api', rateLimit);
 
-app.use(express.static('public'));
+const PUBLIC_DIR = path.join(PROJECT_ROOT, 'public');
+app.use(express.static(PUBLIC_DIR));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
+  res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
 
 import { validateSessionId, validateOutputFilename } from './services/file-utils.js';
