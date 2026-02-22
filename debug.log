@@ -6602,3 +6602,90 @@ TEST
 [2026-02-22T08:58:13.154Z] [COMFY] Progress: 7/7
 [2026-02-22T08:58:14.043Z] [COMFY] Prompt 849ac911-2407-4b4c-8d98-9d923a2c8ba9 completed execution
 [2026-02-22T08:58:14.062Z] [COMFY] Processed outputs for 849ac911-2407-4b4c-8d98-9d923a2c8ba9: found 1 images
+[2026-02-22T17:40:21.955Z] [QUEUE] Processing Job 4f467297-eb2e-4d2d-8196-b08ae58fa46d
+[2026-02-22T17:40:22.024Z] [WORKFLOW] Built workflow for session sid_88ac6673-d028-4faf-9c60-575363c4dc91 with 14 nodes.
+[2026-02-22T17:40:22.025Z] [COMFY] Sending prompt with client_id 8dd269d7-8c53-46d5-bb5e-e211bd0005cd...
+[2026-02-22T17:40:30.172Z] [QUEUE] Processing Job 1a2cadae-4aa7-4d20-be17-e11517c09b17
+[2026-02-22T17:40:30.181Z] [WORKFLOW] Built workflow for session sid_88ac6673-d028-4faf-9c60-575363c4dc91 with 14 nodes.
+[2026-02-22T17:40:30.182Z] [COMFY] Sending prompt with client_id e93cb475-fefd-4514-90a2-13fbe82370e6...
+[2026-02-22T17:40:30.191Z] [COMFY] Prompt Queued: 1b3e0e57-18d3-4432-9ced-db307ee35b7b
+[2026-02-22T17:40:30.194Z] [COMFY] WS Connecting for client e93cb475-fefd-4514-90a2-13fbe82370e6...
+[2026-02-22T17:40:30.260Z] [COMFY] WS Connected for client e93cb475-fefd-4514-90a2-13fbe82370e6
+[2026-02-22T17:40:53.366Z] [COMFY] Progress: 1/4
+[2026-02-22T17:40:55.084Z] [COMFY] Progress: 2/4
+[2026-02-22T17:40:56.721Z] [COMFY] Progress: 3/4
+[2026-02-22T17:40:58.361Z] [COMFY] Progress: 4/4
+[2026-02-22T17:40:59.154Z] [COMFY] Prompt 1b3e0e57-18d3-4432-9ced-db307ee35b7b completed execution
+[2026-02-22T17:40:59.201Z] [COMFY] Processed outputs for 1b3e0e57-18d3-4432-9ced-db307ee35b7b: found 1 images
+[2026-02-22T17:41:44.204Z] [QUEUE] Processing Job b29616ac-d96d-40f0-b53b-9f1261c1d16b
+[2026-02-22T17:41:44.208Z] [WORKFLOW] Built workflow for session sid_88ac6673-d028-4faf-9c60-575363c4dc91 with 14 nodes.
+[2026-02-22T17:41:44.209Z] [COMFY] Sending prompt with client_id e04836ac-c0c0-41e9-a5a0-a69ceaa5f275...
+[2026-02-22T17:41:44.215Z] [COMFY] Prompt Queued: 7170a3bc-c8d2-4d2c-b23d-a13507744671
+[2026-02-22T17:41:44.217Z] [COMFY] WS Connecting for client e04836ac-c0c0-41e9-a5a0-a69ceaa5f275...
+[2026-02-22T17:41:44.228Z] [COMFY] WS Connected for client e04836ac-c0c0-41e9-a5a0-a69ceaa5f275
+[2026-02-22T17:41:45.933Z] [COMFY] Progress: 1/4
+[2026-02-22T17:41:47.556Z] [COMFY] Progress: 2/4
+[2026-02-22T17:41:49.210Z] [COMFY] Progress: 3/4
+[2026-02-22T17:41:50.866Z] [COMFY] Progress: 4/4
+[2026-02-22T17:41:51.665Z] [COMFY] Prompt 7170a3bc-c8d2-4d2c-b23d-a13507744671 completed execution
+[2026-02-22T17:41:51.685Z] [COMFY] Processed outputs for 7170a3bc-c8d2-4d2c-b23d-a13507744671: found 1 images
+[2026-02-22T18:55:05.523Z] [QUEUE] Processing Job e3e195b4-aa6d-4cc9-b36b-484f04ab11c9
+[2026-02-22T18:55:05.542Z] [WORKFLOW] Built workflow for session sid_09b3c20e-f82a-4ae9-9c39-cf5bd65db39a with 14 nodes.
+[2026-02-22T18:55:05.542Z] [COMFY] Sending prompt with client_id fa2b2ff2-147c-4cb3-92cf-c01d2f63e39d...
+[2026-02-22T18:55:05.573Z] [COMFY] Prompt Queued: c8ed91f7-204b-483c-822b-0c8cdc747527
+[2026-02-22T18:55:05.574Z] [COMFY] WS Connecting for client fa2b2ff2-147c-4cb3-92cf-c01d2f63e39d...
+[2026-02-22T18:55:05.582Z] [COMFY] WS Connected for client fa2b2ff2-147c-4cb3-92cf-c01d2f63e39d
+[2026-02-22T18:55:16.858Z] [COMFY] Progress: 1/4
+[2026-02-22T18:55:18.001Z] [COMFY] Progress: 2/4
+[2026-02-22T18:55:19.139Z] [COMFY] Progress: 3/4
+[2026-02-22T18:55:20.292Z] [COMFY] Progress: 4/4
+[2026-02-22T18:55:21.733Z] [COMFY] Prompt c8ed91f7-204b-483c-822b-0c8cdc747527 completed execution
+[2026-02-22T18:55:21.764Z] [COMFY] Processed outputs for c8ed91f7-204b-483c-822b-0c8cdc747527: found 1 images
+[2026-02-22T21:42:56.198Z] [QUEUE] Processing Job ext_65cdd317-3d99-4acd-83ad-46edb5a36e54
+[2026-02-22T21:42:56.203Z] [WORKFLOW] Built workflow for session sid_ext_gen with 19 nodes.
+[2026-02-22T21:42:56.204Z] [COMFY] Sending prompt with client_id 8c0f480a-5793-4b35-b259-cc51658d39d1...
+[2026-02-22T21:42:56.224Z] [COMFY] Prompt Queued: cacb264b-02f3-4e12-9378-9756eee77119
+[2026-02-22T21:42:56.225Z] [COMFY] WS Connecting for client 8c0f480a-5793-4b35-b259-cc51658d39d1...
+[2026-02-22T21:42:56.227Z] [COMFY] WS Connected for client 8c0f480a-5793-4b35-b259-cc51658d39d1
+[2026-02-22T21:43:11.035Z] [COMFY] Progress: 1/4
+[2026-02-22T21:43:14.391Z] [COMFY] Progress: 2/4
+[2026-02-22T21:43:17.729Z] [COMFY] Progress: 3/4
+[2026-02-22T21:43:21.022Z] [COMFY] Progress: 4/4
+[2026-02-22T21:43:22.803Z] [COMFY] Prompt cacb264b-02f3-4e12-9378-9756eee77119 completed execution
+[2026-02-22T21:43:22.830Z] [COMFY] Processed outputs for cacb264b-02f3-4e12-9378-9756eee77119: found 1 images
+[2026-02-22T21:43:22.877Z] [QUEUE] Processing Job 49439987-0328-4827-a38b-80cc80bee713
+[2026-02-22T21:43:22.881Z] [WORKFLOW] Built workflow for session sid_14e9df38-14aa-4669-9094-e811784e83a0 with 14 nodes.
+[2026-02-22T21:43:22.881Z] [COMFY] Sending prompt with client_id ad960f15-14e2-4835-9864-5802f9563a87...
+[2026-02-22T21:43:22.887Z] [COMFY] Prompt Queued: 2b677035-4be1-408f-82ff-bd3b3a7e3c73
+[2026-02-22T21:43:22.890Z] [COMFY] WS Connecting for client ad960f15-14e2-4835-9864-5802f9563a87...
+[2026-02-22T21:43:22.898Z] [COMFY] WS Connected for client ad960f15-14e2-4835-9864-5802f9563a87
+[2026-02-22T21:43:35.806Z] [COMFY] Progress: 1/4
+[2026-02-22T21:43:38.184Z] [COMFY] Progress: 2/4
+[2026-02-22T21:43:39.949Z] [COMFY] Progress: 3/4
+[2026-02-22T21:43:41.752Z] [COMFY] Progress: 4/4
+[2026-02-22T21:43:43.013Z] [COMFY] Prompt 2b677035-4be1-408f-82ff-bd3b3a7e3c73 completed execution
+[2026-02-22T21:43:43.040Z] [COMFY] Processed outputs for 2b677035-4be1-408f-82ff-bd3b3a7e3c73: found 1 images
+[2026-02-22T21:47:58.533Z] [QUEUE] Processing Job ext_3f4ab77a-f518-4909-b9cc-892434cfa327
+[2026-02-22T21:47:58.538Z] [WORKFLOW] Built workflow for session sid_ext_gen with 19 nodes.
+[2026-02-22T21:47:58.538Z] [COMFY] Sending prompt with client_id 757d3666-fc19-40fe-9d60-23bbf2ed9841...
+[2026-02-22T21:47:58.543Z] [COMFY] Prompt Queued: 858e501e-cf09-4a80-8d7f-8484a6562a17
+[2026-02-22T21:47:58.544Z] [COMFY] WS Connecting for client 757d3666-fc19-40fe-9d60-23bbf2ed9841...
+[2026-02-22T21:47:58.546Z] [COMFY] WS Connected for client 757d3666-fc19-40fe-9d60-23bbf2ed9841
+[2026-02-22T21:48:11.961Z] [COMFY] Progress: 1/4
+[2026-02-22T21:48:15.891Z] [COMFY] Progress: 2/4
+[2026-02-22T21:48:19.420Z] [COMFY] Progress: 3/4
+[2026-02-22T21:48:22.710Z] [COMFY] Progress: 4/4
+[2026-02-22T21:48:23.893Z] [COMFY] Prompt 858e501e-cf09-4a80-8d7f-8484a6562a17 completed execution
+[2026-02-22T21:48:23.920Z] [COMFY] Processed outputs for 858e501e-cf09-4a80-8d7f-8484a6562a17: found 1 images
+[2026-02-22T21:48:23.923Z] [QUEUE] Processing Job f48f3205-b987-4a7a-8396-07aafd7e2283
+[2026-02-22T21:48:23.947Z] [WORKFLOW] Built workflow for session sid_14e9df38-14aa-4669-9094-e811784e83a0 with 14 nodes.
+[2026-02-22T21:48:23.947Z] [COMFY] Sending prompt with client_id 77e17c0d-2728-4b6d-ab54-ad8ec0ec098d...
+[2026-02-22T21:48:23.954Z] [COMFY] Prompt Queued: 7df51b8b-52e0-4f54-b158-6c2aa16294eb
+[2026-02-22T21:48:23.956Z] [COMFY] WS Connecting for client 77e17c0d-2728-4b6d-ab54-ad8ec0ec098d...
+[2026-02-22T21:48:23.959Z] [COMFY] WS Connected for client 77e17c0d-2728-4b6d-ab54-ad8ec0ec098d
+[2026-02-22T21:48:36.596Z] [COMFY] Progress: 1/4
+[2026-02-22T21:48:38.510Z] [COMFY] Progress: 2/4
+[2026-02-22T21:48:40.340Z] [COMFY] Progress: 3/4
+[2026-02-22T21:48:42.031Z] [COMFY] Progress: 4/4
+[2026-02-22T21:48:43.186Z] [COMFY] Prompt 7df51b8b-52e0-4f54-b158-6c2aa16294eb completed execution
+[2026-02-22T21:48:43.213Z] [COMFY] Processed outputs for 7df51b8b-52e0-4f54-b158-6c2aa16294eb: found 1 images
