@@ -12,7 +12,7 @@ const upload = multer({
   limits: { fileSize: REF_IMAGE_SIZE_LIMIT }
 });
 
-router.get('/references', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { session_id } = req.query;
     if (!session_id) return res.json([]);
@@ -33,7 +33,7 @@ router.get('/references', async (req, res) => {
   }
 });
 
-router.get('/references/:session_id/:filename', (req, res) => {
+router.get('/:session_id/:filename', (req, res) => {
   const { session_id, filename } = req.params;
   const sessionQuery = req.query.session_id;
 
@@ -119,7 +119,7 @@ router.post('/upload/reference', upload.single('file'), async (req, res) => {
   }
 });
 
-router.delete('/references/:filename', (req, res) => {
+router.delete('/:filename', (req, res) => {
   try {
     const { session_id } = req.query;
     const { filename } = req.params;

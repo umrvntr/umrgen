@@ -8,9 +8,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 
-import { PORT } from './config/constants.js';
+import { PORT, OUTPUT_DIR } from './config/constants.js';
 import { rateLimit } from './middleware/auth.js';
-import { cleanupSessions } from './services/file-utils.js';
+import { cleanupSessions, validateSessionId, validateOutputFilename, getSessionReferencePath } from './services/file-utils.js';
 import { cleanupDailyUsage } from './services/queue.js';
 import { checkComfyConnection } from './services/comfyui.js';
 import generateRoutes from './routes/generate.js';
@@ -42,9 +42,6 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
 
-import { validateSessionId, validateOutputFilename } from './services/file-utils.js';
-import { OUTPUT_DIR } from './config/constants.js';
-
 app.get('/outputs/:session_id/:filename', (req, res) => {
   const { session_id, filename } = req.params;
   const sessionQuery = req.query.session_id;
@@ -57,6 +54,24 @@ app.get('/outputs/:session_id/:filename', (req, res) => {
   }
 
   const filePath = path.join(OUTPUT_DIR, session_id, filename);
+  if (!fs.existsSync(filePath)) return res.status(404).end();
+  res.sendFile(filePath);
+});
+
+// Reference images - serve directly (not under /api)
+app.get('/references/:session_id/:filename', (req, res) => {
+  const { session_id, filename } = req.params;
+  const sessionQuery = req.query.session_id;
+
+  if (!validateSessionId(session_id) || sessionQuery !== session_id) {
+    return res.status(403).end();
+  }
+  if (!validateOutputFilename(filename)) {
+    return res.status(400).end();
+  }
+
+  const refPath = getSessionReferencePath(session_id);
+  const filePath = path.join(refPath, filename);
   if (!fs.existsSync(filePath)) return res.status(404).end();
   res.sendFile(filePath);
 });

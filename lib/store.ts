@@ -221,7 +221,7 @@ const useStore = create<AppState>((set, get) => ({
       formData.append('file', file);
       formData.append('session_id', sid);
 
-      const response = await fetch('/api/upload/reference', {
+      const response = await fetch('/api/references/upload/reference', {
         method: 'POST',
         body: formData,
       });
