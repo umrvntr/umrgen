@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { COMFY_HTTP, COMFY_WS, OUTPUT_DIR, PRO_SECRET, MASTER_PRO_KEY, LIMITED_PRO_KEY, LIMITED_PRO_LIMIT } from '../config/constants.js';
 import { debugLog, validateOutputFilename } from './file-utils.js';
-import { GLOBAL_QUEUE, COMPLETED_TIMES, JOB_STREAMS, broadcastToJob, getAverageGenTime } from './queue.js';
+import { GLOBAL_QUEUE, COMPLETED_TIMES, JOB_STREAMS, LIMITED_PRO_USAGE, broadcastToJob, getAverageGenTime } from './queue.js';
 
 export async function getComfyLoraList() {
   try {

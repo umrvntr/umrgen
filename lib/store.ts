@@ -27,7 +27,7 @@ const loadProState = (): ProState => {
   try {
     const stored = localStorage.getItem('umrgen_pro_token');
     if (stored) {
-      const decoded = JSON.parse(atob(stored.split('.')[1]));
+      const decoded = JSON.parse(atob(stored.split('.')[0]));
       return {
         token: stored,
         plan: decoded.plan || 'free',

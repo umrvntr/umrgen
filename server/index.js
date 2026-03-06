@@ -100,7 +100,7 @@ const startServer = async (port) => {
     console.error(`>>> WARNING: ComfyUI not detected. Generation requests will fail.`);
   }
   
-  const server = app.listen(port, '0.0.0.0', () => {
+  const server = app.listen(port, '127.0.0.1', () => {
     console.log(`\n>>> UMRGEN v0.9.0-klein Ready on http://localhost:${port}\n`);
   });
 
@@ -115,3 +115,4 @@ const startServer = async (port) => {
 };
 
 startServer(PORT);
+
