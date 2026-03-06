@@ -27,7 +27,7 @@ const loadProState = (): ProState => {
   try {
     const stored = localStorage.getItem('umrgen_pro_token');
     if (stored) {
-      const decoded = JSON.parse(atob(stored.split('.')[1]));
+      const decoded = JSON.parse(atob(stored.split('.')[0]));
       return {
         token: stored,
         plan: decoded.plan || 'free',
@@ -221,7 +221,7 @@ const useStore = create<AppState>((set, get) => ({
       formData.append('file', file);
       formData.append('session_id', sid);
 
-      const response = await fetch('/api/upload/reference', {
+      const response = await fetch('/api/references/upload/reference', {
         method: 'POST',
         body: formData,
       });
