@@ -12,20 +12,81 @@ import HistoryDrawer from '@/components/HistoryDrawer';
 // Sortable Reference Image Component for @dnd-kit
 function SortableRefThumb({ 
   refImage, 
-  index 
+  index,
+  onDelete,
+  onReplace,
+  isOpen,
+  onOpen,
+  onClose,
+  replacing,
 }: { 
   refImage: ReferenceImage; 
   index: number;
+  onDelete: () => void;
+  onReplace: (file: File) => Promise<void>;
+  isOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+  replacing: boolean;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
     id: refImage.name 
   });
+  const replaceInputRef = useRef<HTMLInputElement>(null);
+  const dragStartPos = useRef<{ x: number; y: number } | null>(null);
 
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
     touchAction: 'none',
+  };
+
+  // Distinguish tap from drag: track pointer down position
+  const handlePointerDown = (e: React.PointerEvent) => {
+    dragStartPos.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (!dragStartPos.current) return;
+    const dx = Math.abs(e.clientX - dragStartPos.current.x);
+    const dy = Math.abs(e.clientY - dragStartPos.current.y);
+    dragStartPos.current = null;
+    // Only treat as tap if movement was minimal (< 6px) and not currently dragging
+    if (dx < 6 && dy < 6 && !isDragging) {
+      if (isOpen) {
+        onClose();
+      } else {
+        onOpen();
+      }
+    }
+  };
+
+  const handleReplaceClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    replaceInputRef.current?.click();
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onClose();
+    onDelete();
+  };
+
+  const handleReplaceFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.match(/^image\/(png|jpeg|jpg|webp)$/)) {
+      alert('Only PNG, JPG, and WebP images are allowed.');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image must be less than 10MB.');
+      return;
+    }
+    onClose();
+    await onReplace(file);
+    if (replaceInputRef.current) replaceInputRef.current.value = '';
   };
 
   return (
@@ -35,9 +96,37 @@ function SortableRefThumb({
       className={`ref-thumb ${isDragging ? 'dragging' : ''}`}
       {...attributes} 
       {...listeners}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
     >
       <span className="ref-number">{index + 1}</span>
       <img src={refImage.url} alt={refImage.name} />
+
+      {/* Tap overlay */}
+      {isOpen && !isDragging && (
+        <div className="ref-thumb-overlay">
+          {replacing ? (
+            <div className="ref-thumb-overlay-spinner"><div className="spinner" /></div>
+          ) : (
+            <>
+              <button className="ref-overlay-btn ref-overlay-delete" onPointerDown={e => e.stopPropagation()} onClick={handleDeleteClick}>
+                DEL
+              </button>
+              <button className="ref-overlay-btn ref-overlay-replace" onPointerDown={e => e.stopPropagation()} onClick={handleReplaceClick}>
+                SWAP
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
+      <input
+        ref={replaceInputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+        onChange={handleReplaceFileChange}
+        style={{ display: 'none' }}
+      />
     </div>
   );
 }
@@ -66,6 +155,7 @@ export default function HomePage() {
     fetchReferenceImages,
     uploadReference,
     clearReferences,
+    deleteReference,
     reorderReferences,
     loadFromHistory,
     fetchHistory,
@@ -97,6 +187,33 @@ export default function HomePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const loraFileInputRef = useRef<HTMLInputElement>(null);
   const [activeLoraId, setActiveLoraId] = useState<string | null>(null);
+
+  // Reference image overlay state: which ref name has the overlay open
+  const [openRefOverlay, setOpenRefOverlay] = useState<string | null>(null);
+  // Track which ref is currently being replaced (uploading)
+  const [replacingRef, setReplacingRef] = useState<string | null>(null);
+
+  // Replace a single reference image in-place (delete old, upload new at same index)
+  const handleReplaceReference = async (refName: string, refIndex: number, file: File) => {
+    setReplacingRef(refName);
+    try {
+      await deleteReference(refName);
+      // uploadReference appends to end — we then reorder to restore the original index
+      await uploadReference(file);
+      // After upload, the new image is at the end; move it to the original slot
+      const store = useStore.getState();
+      const newImages = store.referenceImages;
+      const newIndex = newImages.length - 1;
+      if (newIndex !== refIndex && newIndex > refIndex) {
+        // reorder from end to original index
+        store.reorderReferences(newIndex, refIndex);
+      }
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Replace failed');
+    } finally {
+      setReplacingRef(null);
+    }
+  };
 
   const [openAccordions, setOpenAccordions] = useState<Record<string, boolean>>({
     pp_color: true,
@@ -849,12 +966,18 @@ export default function HomePage() {
             </div>
             <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <SortableContext items={referenceImages.map(r => r.name)} strategy={rectSortingStrategy}>
-                <div className="ref-grid">
+                <div className="ref-grid" onPointerDown={() => setOpenRefOverlay(null)}>
                   {referenceImages.map((ref, index) => (
                     <SortableRefThumb 
                       key={ref.name} 
                       refImage={ref} 
-                      index={index} 
+                      index={index}
+                      onDelete={() => deleteReference(ref.name)}
+                      onReplace={(file) => handleReplaceReference(ref.name, index, file)}
+                      isOpen={openRefOverlay === ref.name}
+                      onOpen={() => setOpenRefOverlay(ref.name)}
+                      onClose={() => setOpenRefOverlay(null)}
+                      replacing={replacingRef === ref.name}
                     />
                   ))}
                   {referenceImages.length < 10 && (
