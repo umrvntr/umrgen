@@ -227,11 +227,23 @@ const useStore = create<AppState>((set, get) => ({
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Upload failed');
+        let errMsg = 'Upload failed';
+        try {
+          const error = await response.json();
+          errMsg = error.error || errMsg;
+        } catch {
+          // body was empty or not JSON (e.g. multer abort, proxy error)
+          errMsg = `Upload failed (HTTP ${response.status})`;
+        }
+        throw new Error(errMsg);
       }
 
-      const data = await response.json();
+      let data: { filename: string; url: string };
+      try {
+        data = await response.json();
+      } catch {
+        throw new Error('Server returned invalid response after upload');
+      }
       const newRef: ReferenceImage = {
         name: data.filename,
         url: data.url,

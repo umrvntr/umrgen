@@ -54,7 +54,17 @@ router.get('/:session_id/:filename', (req, res) => {
   }
 });
 
-router.post('/upload/reference', upload.single('file'), async (req, res) => {
+router.post('/upload/reference', (req, res, next) => {
+  upload.single('file')(req, res, (err) => {
+    if (err) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(413).json({ error: 'File exceeds 10MB limit.' });
+      }
+      return res.status(400).json({ error: err.message || 'Upload error' });
+    }
+    next();
+  });
+}, async (req, res) => {
   try {
     const { session_id } = req.body;
     if (!session_id) throw new Error('Session ID required');
@@ -112,10 +122,7 @@ router.post('/upload/reference', upload.single('file'), async (req, res) => {
     });
   } catch (err) {
     if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
-    if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(413).json({ error: 'File exceeds 10MB limit.' });
-    }
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: err.message || 'Internal server error' });
   }
 });
 
