@@ -49,6 +49,13 @@ const INITIAL_GENERATION_STATE: GenerationState = {
   queuePosition: null,
   eta: null,
   ipLimitNotice: false,
+  // Upscale state
+  upscaleStatus: 'idle',
+  upscaleJobId: null,
+  upscaleProgress: 0,
+  upscaleImage: null,
+  upscaleScale: null,
+  upscaleError: null,
 };
 
 const useStore = create<AppState>((set, get) => ({
@@ -321,6 +328,13 @@ const useStore = create<AppState>((set, get) => ({
         queuePosition: null,
         eta: null,
         ipLimitNotice: false,
+        // Upscale state
+        upscaleStatus: 'idle',
+        upscaleJobId: null,
+        upscaleProgress: 0,
+        upscaleImage: null,
+        upscaleScale: null,
+        upscaleError: null,
       },
     };
 
@@ -655,6 +669,105 @@ const useStore = create<AppState>((set, get) => ({
       }));
     }
   },
+
+  // Upscale Action
+  upscale: async (scale: number) => {
+    const state = get();
+    const { generation, pro } = state;
+    
+    if (!generation.image) {
+      set((s) => ({
+        generation: {
+          ...s.generation,
+          upscaleStatus: 'error',
+          upscaleError: 'No image to upscale',
+        },
+      }));
+      return;
+    }
+    
+    // Set upscale state
+    set((s) => ({
+      generation: {
+        ...s.generation,
+        upscaleStatus: 'queued',
+        upscaleJobId: null,
+        upscaleProgress: 0,
+        upscaleImage: null,
+        upscaleScale: scale,
+        upscaleError: null,
+      },
+    }));
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (pro.token) {
+      headers['Authorization'] = `Bearer ${pro.token}`;
+    }
+
+    try {
+      const response = await fetch('/api/upscale', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          image_url: generation.image,
+          scale,
+          session_id: getSessionId(),
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        
+        if (response.status === 403 && errorData.error === 'PRO_REQUIRED') {
+          set((s) => ({
+            generation: {
+              ...s.generation,
+              upscaleStatus: 'error',
+              upscaleError: 'Upscale requires PRO membership',
+            },
+          }));
+          set((s) => ({ proModalOpen: true }));
+          return;
+        }
+        
+        if (response.status === 429) {
+          set((s) => ({
+            generation: {
+              ...s.generation,
+              upscaleStatus: 'error',
+              upscaleError: 'A job is already in progress',
+            },
+          }));
+          return;
+        }
+        
+        throw new Error(errorData.error || 'Upscale failed');
+      }
+
+      const data = await response.json();
+      const jobId = data.job_id;
+
+      set((s) => ({
+        generation: {
+          ...s.generation,
+          upscaleStatus: 'running',
+          upscaleJobId: jobId,
+        },
+      }));
+
+      startUpscaleLifecycle(jobId);
+    } catch (error) {
+      set((s) => ({
+        generation: {
+          ...s.generation,
+          upscaleStatus: 'error',
+          upscaleError: error instanceof Error ? error.message : 'Upscale failed',
+        },
+      }));
+    }
+  },
 }));
 
 /**
@@ -752,6 +865,72 @@ function startJobLifecycle(jobId: string, ipNotice = false) {
       }
     } catch (err) {
       console.warn('[POLL] Error:', err);
+    }
+  }, 1000);
+}
+
+// Upscale job lifecycle
+function startUpscaleLifecycle(jobId: string) {
+  let pollInterval: ReturnType<typeof setInterval> | null = null;
+
+  const updateUpscaleState = (patch: Partial<GenerationState>) => {
+    useStore.setState((s: AppState) => ({
+      generation: { 
+        ...s.generation, 
+        upscaleStatus: patch.upscaleStatus ?? s.generation.upscaleStatus,
+        upscaleJobId: patch.upscaleJobId ?? s.generation.upscaleJobId,
+        upscaleProgress: patch.upscaleProgress ?? s.generation.upscaleProgress,
+        upscaleImage: patch.upscaleImage ?? s.generation.upscaleImage,
+        upscaleError: patch.upscaleError ?? s.generation.upscaleError,
+      },
+    }));
+  };
+
+  const finalizeUpscaleError = (message: string) => {
+    if (pollInterval) {
+      clearInterval(pollInterval);
+      pollInterval = null;
+    }
+    updateUpscaleState({ upscaleStatus: 'error', upscaleError: message });
+  };
+
+  const finalizeUpscaleSuccess = (imageUrl: string) => {
+    if (pollInterval) {
+      clearInterval(pollInterval);
+      pollInterval = null;
+    }
+    updateUpscaleState({ 
+      upscaleStatus: 'success', 
+      upscaleImage: imageUrl, 
+      upscaleProgress: 100 
+    });
+  };
+
+  // Set to running
+  updateUpscaleState({ upscaleStatus: 'running' });
+
+  pollInterval = setInterval(async () => {
+    try {
+      const response = await fetch(`/api/job/${jobId}/status`);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      const data = await response.json();
+
+      if (data.state === 'completed') {
+        const imageUrl = data.results?.images?.[0]?.url;
+        if (imageUrl) {
+          finalizeUpscaleSuccess(imageUrl);
+        } else {
+          finalizeUpscaleError('No upscaled image returned');
+        }
+      } else if (data.state === 'failed') {
+        finalizeUpscaleError(data.error || 'Upscale failed');
+      } else if (data.state === 'running') {
+        // Simulate progress for upscaling (it's faster than generation)
+        updateUpscaleState({ upscaleProgress: 50 });
+      }
+    } catch (err) {
+      console.warn('[UPSCALE POLL] Error:', err);
     }
   }, 1000);
 }

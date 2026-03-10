@@ -405,15 +405,19 @@ function getJobStatus(jobId) {
   if (!job) return { state: "unknown" };
   const queuedJobs = GLOBAL_QUEUE.filter(j => j.state === "queued");
   const pos = queuedJobs.findIndex(j => j.job_id === jobId);
-  return {
+  
+  const status = {
     job_id: job.job_id,
     state: job.state,
     queue_position: pos >= 0 ? pos : null,
     eta_seconds: pos >= 0 ? (pos + 1) * getAverageGenTime() : 0,
     created_at: job.created_at,
     results: job.results,
-    error: job.error
+    error: job.error,
+    job_type: job.parameters.type || 'generation'
   };
+  
+  return status;
 }
 
 async function processQueue() {
@@ -421,6 +425,36 @@ async function processQueue() {
   if (activeJob) return;
   const nextJob = GLOBAL_QUEUE.find(j => j.state === "queued");
   if (!nextJob) return;
+  
+  // Handle upscale jobs differently
+  if (nextJob.parameters.type === 'upscale') {
+    nextJob.state = "running";
+    nextJob.started_at = Date.now();
+    debugLog(`[QUEUE] Processing Upscale Job ${nextJob.job_id} for session ${nextJob.session_id}`);
+    try {
+      const result = await processUpscaleJob(nextJob);
+      nextJob.state = "completed";
+      nextJob.results = result;
+      nextJob.completed_at = Date.now();
+      const duration = (nextJob.completed_at - nextJob.started_at) / 1000;
+      COMPLETED_TIMES.push(duration);
+      if (COMPLETED_TIMES.length > 10) COMPLETED_TIMES.shift();
+    } catch (err) {
+      debugLog(`[QUEUE] Upscale Job ${nextJob.job_id} FAILED: ${err.message}`);
+      nextJob.state = "failed";
+      nextJob.error = err.message;
+      broadcastToJob(nextJob.job_id, { type: 'error', message: err.message });
+    } finally {
+      setTimeout(() => {
+        const idx = GLOBAL_QUEUE.findIndex(j => j.job_id === nextJob.job_id);
+        if (idx > -1) GLOBAL_QUEUE.splice(idx, 1);
+      }, 60000);
+      setImmediate(processQueue);
+    }
+    return;
+  }
+  
+  // Regular generation job
   nextJob.state = "running";
   nextJob.started_at = Date.now();
   debugLog(`[QUEUE] Processing Job ${nextJob.job_id} for session ${nextJob.session_id}`);
@@ -1702,6 +1736,141 @@ app.post("/api/job/:job_id/cancel", (req, res) => {
   if (idx > -1) { if (GLOBAL_QUEUE[idx].state === "running") { GLOBAL_QUEUE[idx].state = "cancelled"; } else { GLOBAL_QUEUE.splice(idx, 1); } }
   res.json({ success: true });
 });
+
+// ========== UPSCALE ENDPOINT ==========
+
+app.post("/api/upscale", async (req, res) => {
+  try {
+    const { image_url, scale, session_id } = req.body;
+    
+    if (!session_id || !validateSessionId(session_id)) {
+      return res.status(400).json({ error: "Invalid session ID." });
+    }
+    if (!image_url) return res.status(400).json({ error: "Image URL is required." });
+    
+    // Validate scale
+    const validScales = [2, 4, 8];
+    const scaleNum = parseInt(scale) || 2;
+    if (!validScales.includes(scaleNum)) {
+      return res.status(400).json({ error: "Scale must be 2, 4, or 8." });
+    }
+
+    const token = req.headers.authorization?.split(" ")[1];
+    const { plan } = verifyProToken(token);
+    const isPro = (plan === "pro");
+    
+    // Upscale is PRO-only
+    if (!isPro) {
+      return res.status(403).json({ error: "PRO_REQUIRED", reason: "Upscale requires PRO membership." });
+    }
+
+    // Check concurrency
+    const existingJob = GLOBAL_QUEUE.find(j =>
+      j.session_id === session_id &&
+      (j.state === 'queued' || j.state === 'running')
+    );
+
+    if (existingJob) {
+      return res.status(429).json({
+        error: "CONCURRENT_LIMIT",
+        message: "You already have a job in progress."
+      });
+    }
+
+    // Extract image filename from URL
+    const urlParts = image_url.split('/');
+    const filename = urlParts[urlParts.length - 1].split('?')[0];
+    
+    // Check if image exists in outputs
+    const imagePath = session_id 
+      ? path.join(OUTPUT_DIR, session_id, filename)
+      : path.join(OUTPUT_DIR, filename);
+    
+    if (!fs.existsSync(imagePath)) {
+      return res.status(404).json({ error: "Source image not found." });
+    }
+
+    // Create upscale job
+    const jobId = randomUUID();
+    const newJob = { 
+      job_id: jobId, 
+      session_id, 
+      state: "queued", 
+      created_at: Date.now(), 
+      parameters: {
+        type: 'upscale',
+        image_path: imagePath,
+        image_url: image_url,
+        scale: scaleNum,
+        session_id
+      }, 
+      results: null, 
+      error: null 
+    };
+    
+    GLOBAL_QUEUE.push(newJob);
+    console.log(`[UPSCALE] Job Queued | ID: ${jobId} | Scale: ${scaleNum}x | Source: ${filename}`);
+    processQueue();
+    
+    res.json({ job_id: jobId });
+  } catch (err) { 
+    res.status(500).json({ error: err.message }); 
+  }
+});
+
+// Process upscale jobs
+async function processUpscaleJob(job) {
+  const p = job.parameters;
+  const { image_path, scale, session_id } = p;
+  
+  debugLog(`[UPSCALE] Processing job ${job.job_id} with scale ${scale}x`);
+  
+  // Build upscale workflow
+  const workflow = buildUpscaleWorkflow({
+    image_path,
+    scale,
+    session_id
+  });
+
+  const { promptId, clientId } = await queuePrompt(workflow);
+  await waitForCompletion(promptId, clientId, job.job_id);
+
+  const images = await processComfyOutputs(promptId, session_id);
+  
+  return { images };
+}
+
+// Build ComfyUI workflow for upscaling using seedVR
+function buildUpscaleWorkflow(options) {
+  const { image_path, scale, session_id } = options;
+  
+  // Use seedVR for upscaling - a fast and efficient upscaler
+  // seedVR can handle 2x, 4x, 8x scales
+  const workflow = {
+    "1": {
+      inputs: { image: image_path },
+      class_type: "LoadImage"
+    },
+    "2": {
+      inputs: {
+        model_name: "seed4x_ultrasharp.pth",
+        scale: scale,
+        tile_width: 512,
+        tile_height: 512,
+        tile_overlap: 64,
+        keep_input_image: false
+      },
+      class_type: "ImageUpscaleWithModel"
+    },
+    "3": {
+      inputs: { filename_prefix: "AIEGO_UPSCALE", images: ["2", 0] },
+      class_type: "SaveImage"
+    }
+  };
+  
+  debugLog(`[UPSCALE] Built workflow with seedVR ${scale}x upscale`);
+  return workflow;
+}
 
 // Global error handler for API routes - ensures errors return JSON, not HTML
 app.use('/api', (err, req, res, next) => {

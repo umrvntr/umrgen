@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Menu, X, Upload, Trash2, Zap, Lock, Key, AlertCircle, ChevronLeft, ChevronRight, Sliders, ChevronDown, Plus, Download, Globe, FileUp, History, RotateCw } from 'lucide-react';
+import { Menu, X, Upload, Trash2, Zap, Lock, Key, AlertCircle, ChevronLeft, ChevronRight, Sliders, ChevronDown, Plus, Download, Globe, FileUp, History, RotateCw, Maximize2 } from 'lucide-react';
 import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, useSortable, rectSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -171,6 +171,7 @@ export default function HomePage() {
     updateLora,
     uploadLoraFile,
     importLora,
+    upscale,
     isMobile,
     sidebarOpen,
     historyCollapsed,
@@ -192,6 +193,11 @@ export default function HomePage() {
   const [openRefOverlay, setOpenRefOverlay] = useState<string | null>(null);
   // Track which ref is currently being replaced (uploading)
   const [replacingRef, setReplacingRef] = useState<string | null>(null);
+
+  // Upscale state
+  const [showUpscaleMenu, setShowUpscaleMenu] = useState(false);
+  const selectedUpscaleScale = generation.upscaleScale || 2;
+  const upscaleStatus: 'idle' | 'queued' | 'running' | 'success' | 'error' = generation.upscaleStatus || 'idle';
 
   // Replace a single reference image in-place (delete old, upload new at same index)
   const handleReplaceReference = async (refName: string, refIndex: number, file: File) => {
@@ -1310,7 +1316,78 @@ export default function HomePage() {
 
           {/* Result Image */}
           {generation.status === 'success' && generation.image && (
-            <img src={generation.image} alt="Result" className="viewport-image" />
+            <div className="result-image-container">
+              <img src={generation.image} alt="Result" className="viewport-image" />
+              
+              {/* Upscale Button - Show after generation success */}
+              {isPro && (
+                <div className="upscale-controls">
+                  {(upscaleStatus === 'idle' || upscaleStatus === 'success' || upscaleStatus === 'error') ? (
+                    <div style={{ position: 'relative' }}>
+                      <button 
+                        className="upscale-btn"
+                        onClick={() => setShowUpscaleMenu(!showUpscaleMenu)}
+                        disabled={(upscaleStatus as string) === 'running' || (upscaleStatus as string) === 'queued'}
+                      >
+                        <Maximize2 size={12} />
+                        <span>UPSCALE</span>
+                        {generation.upscaleScale && <span className="upscale-scale-badge">{generation.upscaleScale}x</span>}
+                      </button>
+                      
+                      {showUpscaleMenu && (
+                        <div className="upscale-menu">
+                          <button 
+                            className={`upscale-option ${selectedUpscaleScale === 2 ? 'active' : ''}`}
+                            onClick={() => {
+                              upscale(2);
+                              setShowUpscaleMenu(false);
+                            }}
+                          >
+                            2x
+                          </button>
+                          <button 
+                            className={`upscale-option ${selectedUpscaleScale === 4 ? 'active' : ''}`}
+                            onClick={() => {
+                              upscale(4);
+                              setShowUpscaleMenu(false);
+                            }}
+                          >
+                            4x
+                          </button>
+                          <button 
+                            className={`upscale-option ${selectedUpscaleScale === 8 ? 'active' : ''}`}
+                            onClick={() => {
+                              upscale(8);
+                              setShowUpscaleMenu(false);
+                            }}
+                          >
+                            8x
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="upscale-progress">
+                      {upscaleStatus === 'queued' && 'QUEUED...'}
+                      {upscaleStatus === 'running' && `UPSCALING ${generation.upscaleProgress.toFixed(0)}%`}
+                    </div>
+                  )}
+                  
+                  {generation.upscaleError && (
+                    <div className="upscale-error">
+                      {generation.upscaleError}
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {/* Show upscaled image when available */}
+              {upscaleStatus === 'success' && generation.upscaleImage && (
+                <div className="upscaled-image-container">
+                  <img src={generation.upscaleImage} alt="Upscaled" className="upscaled-image" />
+                </div>
+              )}
+            </div>
           )}
 
           {/* Error State */}

@@ -64,6 +64,13 @@ export interface GenerationState {
   queuePosition: number | null;
   eta: number | null;
   ipLimitNotice: boolean;
+  // Upscale state
+  upscaleStatus: 'idle' | 'queued' | 'running' | 'success' | 'error';
+  upscaleJobId: string | null;
+  upscaleProgress: number;
+  upscaleImage: string | null;
+  upscaleScale: number | null;
+  upscaleError: string | null;
 }
 
 // Reference Image Types
@@ -213,4 +220,7 @@ export interface AppState {
 
   // Generation action
   generate: () => Promise<void>;
+  
+  // Upscale action
+  upscale: (scale: number) => Promise<void>;
 }
