@@ -1850,27 +1850,66 @@ async function processUpscaleJob(job) {
 async function uploadImageToComfy(imagePath) {
   try {
     const filename = path.basename(imagePath);
-    const imageData = fs.readFileSync(imagePath);
+    const imageBuffer = fs.readFileSync(imagePath);
     
-    const formData = new FormData();
-    formData.append('image', new Blob([imageData]), filename);
-    formData.append('type', 'input');
-    formData.append('overwrite', 'true');
+    debugLog(`[UPSCALE] Preparing ${filename} (${imageBuffer.length} bytes) for ComfyUI...`);
+    
+    // Create multipart form data manually
+    const boundary = '----FormBoundary' + Math.random().toString(36).substring(2);
+    const bodyParts = [];
+    
+    // Add the image field
+    bodyParts.push(`--${boundary}\r\n`);
+    bodyParts.push(`Content-Disposition: form-data; name="image"; filename="${filename}"\r\n`);
+    bodyParts.push('Content-Type: image/png\r\n\r\n');
+    bodyParts.push(imageBuffer);
+    bodyParts.push('\r\n');
+    
+    // Add type field
+    bodyParts.push(`--${boundary}\r\n`);
+    bodyParts.push('Content-Disposition: form-data; name="type"\r\n\r\n');
+    bodyParts.push('input\r\n');
+    
+    // Add overwrite field
+    bodyParts.push(`--${boundary}\r\n`);
+    bodyParts.push('Content-Disposition: form-data; name="overwrite"\r\n\r\n');
+    bodyParts.push('true\r\n');
+    
+    bodyParts.push(`--${boundary}--\r\n`);
+    
+    const body = Buffer.concat(bodyParts.map(p => Buffer.isBuffer(p) ? p : Buffer.from(p)));
+    
+    debugLog(`[UPSCALE] Sending upload request to ${COMFY_HTTP}/upload/image...`);
     
     const response = await fetch(`${COMFY_HTTP}/upload/image`, {
       method: 'POST',
-      body: formData
+      headers: {
+        'Content-Type': `multipart/form-data; boundary=${boundary}`,
+      },
+      body: body
     });
     
+    const responseText = await response.text();
+    debugLog(`[UPSCALE] Upload response: ${response.status} - ${responseText.substring(0, 300)}`);
+    
     if (!response.ok) {
-      const errText = await response.text();
-      debugLog(`[UPSCALE] Upload failed: ${errText}`);
+      debugLog(`[UPSCALE] Upload failed with status ${response.status}`);
       return null;
     }
     
-    const result = await response.json();
-    debugLog(`[UPSCALE] Image uploaded: ${result.name}`);
-    return result.name;
+    // Try to parse as JSON
+    try {
+      const result = JSON.parse(responseText);
+      debugLog(`[UPSCALE] Image uploaded successfully: ${result.name}`);
+      return result.name;
+    } catch {
+      // If not JSON, check if response contains the filename
+      if (responseText.includes('.png')) {
+        const match = responseText.match(/([a-zA-Z0-9_\-\.]+\.png)/);
+        if (match) return match[1];
+      }
+      return filename;
+    }
   } catch (e) {
     debugLog(`[UPSCALE] Upload error: ${e.message}`);
     return null;
