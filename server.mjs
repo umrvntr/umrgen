@@ -1821,15 +1821,17 @@ app.post("/api/upscale", async (req, res) => {
 // Process upscale jobs
 async function processUpscaleJob(job) {
   const p = job.parameters;
-  const { image_path, scale, session_id } = p;
+  const { image_path, image_url, scale, session_id } = p;
   
   debugLog(`[UPSCALE] Processing job ${job.job_id} with scale ${scale}x`);
   
-  // Upload image to ComfyUI first so it can be accessed
-  const comfyImagePath = await uploadImageToComfy(image_path);
+  // Use the web URL directly - ComfyUI can load from URLs
+  const comfyImagePath = image_url;
   if (!comfyImagePath) {
-    throw new Error("Failed to upload image to ComfyUI");
+    throw new Error("No image URL provided");
   }
+  
+  debugLog(`[UPSCALE] Using image URL: ${comfyImagePath}`);
   
   // Build upscale workflow
   const workflow = buildUpscaleWorkflow({
@@ -1847,71 +1849,16 @@ async function processUpscaleJob(job) {
 }
 
 // Upload image to ComfyUI and return the filename ComfyUI uses
-async function uploadImageToComfy(imagePath) {
+async function uploadImageToComfy(imagePath, imageUrl) {
   try {
     const filename = path.basename(imagePath);
-    const imageBuffer = fs.readFileSync(imagePath);
     
-    debugLog(`[UPSCALE] Preparing ${filename} (${imageBuffer.length} bytes) for ComfyUI...`);
+    debugLog(`[UPSCALE] Image URL for ComfyUI: ${imageUrl}`);
     
-    // Create multipart form data manually
-    const boundary = '----FormBoundary' + Math.random().toString(36).substring(2);
-    const bodyParts = [];
-    
-    // Add the image field
-    bodyParts.push(`--${boundary}\r\n`);
-    bodyParts.push(`Content-Disposition: form-data; name="image"; filename="${filename}"\r\n`);
-    bodyParts.push('Content-Type: image/png\r\n\r\n');
-    bodyParts.push(imageBuffer);
-    bodyParts.push('\r\n');
-    
-    // Add type field
-    bodyParts.push(`--${boundary}\r\n`);
-    bodyParts.push('Content-Disposition: form-data; name="type"\r\n\r\n');
-    bodyParts.push('input\r\n');
-    
-    // Add overwrite field
-    bodyParts.push(`--${boundary}\r\n`);
-    bodyParts.push('Content-Disposition: form-data; name="overwrite"\r\n\r\n');
-    bodyParts.push('true\r\n');
-    
-    bodyParts.push(`--${boundary}--\r\n`);
-    
-    const body = Buffer.concat(bodyParts.map(p => Buffer.isBuffer(p) ? p : Buffer.from(p)));
-    
-    debugLog(`[UPSCALE] Sending upload request to ${COMFY_HTTP}/upload/image...`);
-    
-    const response = await fetch(`${COMFY_HTTP}/upload/image`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': `multipart/form-data; boundary=${boundary}`,
-      },
-      body: body
-    });
-    
-    const responseText = await response.text();
-    debugLog(`[UPSCALE] Upload response: ${response.status} - ${responseText.substring(0, 300)}`);
-    
-    if (!response.ok) {
-      debugLog(`[UPSCALE] Upload failed with status ${response.status}`);
-      return null;
-    }
-    
-    // Try to parse as JSON
-    try {
-      const result = JSON.parse(responseText);
-      debugLog(`[UPSCALE] Image uploaded successfully: ${result.name}`);
-      return result.name;
-    } catch {
-      // If not JSON, check if response contains the filename
-      if (responseText.includes('.png')) {
-        const match = responseText.match(/([a-zA-Z0-9_\-\.]+\.png)/);
-        if (match) return match[1];
-      }
-      return filename;
-    }
+    // Return the web URL directly - ComfyUI can load from URLs
+    return imageUrl;
   } catch (e) {
-    debugLog(`[UPSCALE] Upload error: ${e.message}`);
+    debugLog(`[UPSCALE] Error: ${e.message}`);
     return null;
   }
 }
