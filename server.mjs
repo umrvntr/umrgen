@@ -1825,9 +1825,15 @@ async function processUpscaleJob(job) {
   
   debugLog(`[UPSCALE] Processing job ${job.job_id} with scale ${scale}x`);
   
+  // Upload image to ComfyUI first so it can be accessed
+  const comfyImagePath = await uploadImageToComfy(image_path);
+  if (!comfyImagePath) {
+    throw new Error("Failed to upload image to ComfyUI");
+  }
+  
   // Build upscale workflow
   const workflow = buildUpscaleWorkflow({
-    image_path,
+    image_path: comfyImagePath,
     scale,
     session_id
   });
@@ -1840,12 +1846,43 @@ async function processUpscaleJob(job) {
   return { images };
 }
 
+// Upload image to ComfyUI and return the filename ComfyUI uses
+async function uploadImageToComfy(imagePath) {
+  try {
+    const filename = path.basename(imagePath);
+    const imageData = fs.readFileSync(imagePath);
+    
+    const formData = new FormData();
+    formData.append('image', new Blob([imageData]), filename);
+    formData.append('type', 'input');
+    formData.append('overwrite', 'true');
+    
+    const response = await fetch(`${COMFY_HTTP}/upload/image`, {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (!response.ok) {
+      const errText = await response.text();
+      debugLog(`[UPSCALE] Upload failed: ${errText}`);
+      return null;
+    }
+    
+    const result = await response.json();
+    debugLog(`[UPSCALE] Image uploaded: ${result.name}`);
+    return result.name;
+  } catch (e) {
+    debugLog(`[UPSCALE] Upload error: ${e.message}`);
+    return null;
+  }
+}
+
 // Build ComfyUI workflow for upscaling using seedVR
 function buildUpscaleWorkflow(options) {
   const { image_path, scale, session_id } = options;
   
   // Use seedVR for upscaling - a fast and efficient upscaler
-  // seedVR can handle 2x, 4x, 8x scales
+  // After uploading to ComfyUI, we just use the filename
   const workflow = {
     "1": {
       inputs: { image: image_path },
