@@ -4,6 +4,7 @@ outputs/
 output*/
 USER_LORA/
 USER_LORA_LEGACY/
+loras/
 sessions/
 tmp_uploads/
 history.json
