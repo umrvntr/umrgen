@@ -41,6 +41,9 @@ const COMFY_HOST = process.env.COMFY_HOST || "127.0.0.1:8188";
 const COMFY_HTTP = `http://${COMFY_HOST}`;
 const COMFY_WS = `ws://${COMFY_HOST}/ws`;
 
+// ComfyUI input folder - where to copy images for upscaling
+const COMFY_INPUT_DIR = process.env.COMFY_INPUT_DIR || "D:\\ComfyUI_Windows_portable\\ComfyUI\\input";
+
 const OUTPUT_DIR = path.join(process.cwd(), "outputs");
 const HISTORY_PATH = path.join(process.cwd(), "history.json");
 const SESSIONS_ROOT = path.join(process.cwd(), "sessions");
@@ -1821,21 +1824,31 @@ app.post("/api/upscale", async (req, res) => {
 // Process upscale jobs
 async function processUpscaleJob(job) {
   const p = job.parameters;
-  const { image_path, image_url, scale, session_id } = p;
+  const { image_path, scale, session_id } = p;
   
   debugLog(`[UPSCALE] Processing job ${job.job_id} with scale ${scale}x`);
   
-  // Use the web URL directly - ComfyUI can load from URLs
-  const comfyImagePath = image_url;
-  if (!comfyImagePath) {
-    throw new Error("No image URL provided");
+  // Copy image to ComfyUI input folder
+  const filename = path.basename(image_path);
+  const comfyInputPath = path.join(COMFY_INPUT_DIR, filename);
+  
+  try {
+    // Ensure input directory exists
+    if (!fs.existsSync(COMFY_INPUT_DIR)) {
+      fs.mkdirSync(COMFY_INPUT_DIR, { recursive: true });
+    }
+    
+    // Copy the image
+    fs.copyFileSync(image_path, comfyInputPath);
+    debugLog(`[UPSCALE] Copied image to ComfyUI input: ${comfyInputPath}`);
+  } catch (e) {
+    debugLog(`[UPSCALE] Failed to copy image: ${e.message}`);
+    throw new Error("Failed to prepare image for upscaling");
   }
   
-  debugLog(`[UPSCALE] Using image URL: ${comfyImagePath}`);
-  
-  // Build upscale workflow
+  // Build upscale workflow with the filename (not full path)
   const workflow = buildUpscaleWorkflow({
-    image_path: comfyImagePath,
+    image_path: filename, // Just use filename - ComfyUI will find it in input folder
     scale,
     session_id
   });
@@ -1845,22 +1858,17 @@ async function processUpscaleJob(job) {
 
   const images = await processComfyOutputs(promptId, session_id);
   
-  return { images };
-}
-
-// Upload image to ComfyUI and return the filename ComfyUI uses
-async function uploadImageToComfy(imagePath, imageUrl) {
+  // Clean up - remove image from ComfyUI input
   try {
-    const filename = path.basename(imagePath);
-    
-    debugLog(`[UPSCALE] Image URL for ComfyUI: ${imageUrl}`);
-    
-    // Return the web URL directly - ComfyUI can load from URLs
-    return imageUrl;
+    if (fs.existsSync(comfyInputPath)) {
+      fs.unlinkSync(comfyInputPath);
+      debugLog(`[UPSCALE] Cleaned up input image: ${comfyInputPath}`);
+    }
   } catch (e) {
-    debugLog(`[UPSCALE] Error: ${e.message}`);
-    return null;
+    debugLog(`[UPSCALE] Cleanup warning: ${e.message}`);
   }
+  
+  return { images };
 }
 
 // Build ComfyUI workflow for upscaling using seedVR
